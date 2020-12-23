@@ -1,0 +1,10 @@
+[package]
+name = "utils"
+description = "General utility functions for solving Advent of Code problems"
+version = "0.1.0"
+authors = ["Kesavan Yogeswaran <kesyog@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+num-integer = "^0.1"
+regex = "^1.4.2"
