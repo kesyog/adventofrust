@@ -9,10 +9,17 @@ use std::str::FromStr;
 ///
 /// Performs an extra copy in order to return an owned value. Do it yourself if you really care
 /// about speed
-pub fn get_lines_from_file(path: &str) -> impl Iterator<Item = String> {
+pub fn get_lines_from_file(path: &str) -> Vec<String> {
     let data = fs::read_to_string(Path::new(path)).unwrap();
-    let res: Vec<String> = data.split_terminator('\n').map(|s| s.to_string()).collect();
-    res.into_iter()
+    data.split_terminator('\n').map(|s| s.to_string()).collect()
+}
+
+pub fn trim_and_split(string: &str, split: &str) -> Vec<String> {
+    string
+        .trim()
+        .split_terminator(split)
+        .map(|s| s.trim().to_string())
+        .collect()
 }
 
 /// Return a list of all integers in a string
