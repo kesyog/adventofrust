@@ -4,6 +4,7 @@ use std::fmt::Debug;
 use std::fs;
 use std::path::Path;
 use std::str::FromStr;
+use std::string::ToString;
 
 /// Return an iterator over the lines in the given file.
 ///
@@ -11,7 +12,7 @@ use std::str::FromStr;
 /// about speed
 pub fn get_lines_from_file(path: &str) -> Vec<String> {
     let data = fs::read_to_string(Path::new(path)).unwrap();
-    data.split_terminator('\n').map(|s| s.to_string()).collect()
+    data.split_terminator('\n').map(ToString::to_string).collect()
 }
 
 pub fn trim_and_split(string: &str, split: &str) -> Vec<String> {
