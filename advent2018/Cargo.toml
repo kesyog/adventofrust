@@ -6,6 +6,7 @@ authors = ["Kesavan Yogeswaran <kesyog@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+itertools = "^0.4.6"
 regex = "^1.4.2"
 utils = { path = "../utils" }
 
@@ -16,3 +17,7 @@ path = "src/day1.rs"
 [[bin]]
 name = "2018-day2"
 path = "src/day2.rs"
+
+[[bin]]
+name = "2018-day3"
+path = "src/day3.rs"
