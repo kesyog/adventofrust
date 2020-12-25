@@ -9,55 +9,31 @@ fn swap_ascii_case(chr: &char) -> char {
     }
 }
 
-/// Perform one reduction iteration of the reaction and return the result
-fn perform_reaction_step(polymer: &str) -> String {
-    // Iterate over tuples containing each character in the string as well as the next character
-    let mut iter = polymer
-        .chars()
-        .zip(polymer[1..].chars().map(Some).chain(std::iter::once(None)));
-    let mut new_polymer = String::with_capacity(polymer.len());
-    loop {
-        match iter.next() {
-            Some((unit, Some(next_unit))) => {
-                if unit == swap_ascii_case(&next_unit) {
-                    // Skip over the current unit and the next unit since they have reacted
-                    iter.next();
+fn react(polymer: &str) -> String {
+    if polymer.is_empty() {
+        return String::new();
+    }
+    polymer.chars().fold(
+        String::with_capacity(polymer.len()),
+        |mut acc, next_unit| {
+            if acc.is_empty() {
+                acc.push(next_unit);
+            } else {
+                let last_unit = acc.chars().last().unwrap();
+                if last_unit == swap_ascii_case(&next_unit) {
+                    acc.pop();
                 } else {
-                    // The current unit did not react with its neighbor
-                    new_polymer.push(unit);
+                    acc.push(next_unit);
                 }
             }
-            // Edge case for the last character in the string
-            Some((unit, None)) => {
-                new_polymer.push(unit);
-                break;
-            }
-            // Reached end-of-string
-            None => break,
-        }
-    }
-    new_polymer
-}
-
-/// Repeatedly run the reaction until the polymer string stops changing
-fn run_reaction_to_steady_state(polymer: &str) -> String {
-    let mut polymer = polymer.to_string();
-    while !polymer.is_empty() {
-        let new_polymer = perform_reaction_step(&polymer);
-        if new_polymer.len() == polymer.len() {
-            assert_eq!(new_polymer, polymer);
-            break;
-        }
-        polymer = new_polymer;
-    }
-    polymer
+            acc
+        },
+    )
 }
 
 fn part2(polymer: &str) -> usize {
     const ASCII_ALPHABET: &str = "abcdefghijklmnopqrstuvwxyz";
-    // Try running the reaction to completion with each letter removed
-    // Potential optimization: track which letters are in the polymer and only bother iterating over
-    // those
+    // Try running the reaction with each letter removed
     ASCII_ALPHABET
         .chars()
         .map(|c| {
@@ -69,7 +45,7 @@ fn part2(polymer: &str) -> usize {
                 // The letter being tested isn't present so removing it won't make a difference
                 polymer.len()
             } else {
-                run_reaction_to_steady_state(&filtered_polymer).len()
+                react(&filtered_polymer).len()
             }
         })
         .min()
@@ -78,8 +54,9 @@ fn part2(polymer: &str) -> usize {
 
 fn main() {
     let input = include_str!("../inputs/day5.txt").trim();
-    let reacted_polymer = run_reaction_to_steady_state(&input);
+    let reacted_polymer = react(&input);
     println!("Part 1: {}", reacted_polymer.len());
+    // Save some time by providing the pre-reduced polymer to part 2
     println!("Part 2: {}", part2(&reacted_polymer));
 }
 
@@ -88,29 +65,17 @@ mod tests {
     use super::*;
 
     #[test]
-    fn reaction_step() {
-        assert_eq!("a", perform_reaction_step("a"));
-        assert_eq!("A", perform_reaction_step("A"));
-        assert_eq!("", perform_reaction_step("aA"));
-        assert_eq!("", perform_reaction_step("Aa"));
-        assert_eq!("aA", perform_reaction_step("abBA"));
-        assert_eq!("aA", perform_reaction_step("aBbA"));
-        assert_eq!("abba", perform_reaction_step("abba"));
-        assert_eq!("ABBA", perform_reaction_step("ABBA"));
-        assert_eq!("Aa", perform_reaction_step("AbBa"));
-    }
-
-    #[test]
     fn given_part1_input() {
-        assert_eq!(0, run_reaction_to_steady_state("aA").len());
-        assert_eq!(0, run_reaction_to_steady_state("abBA").len());
-        assert_eq!(4, run_reaction_to_steady_state("abAB").len());
-        assert_eq!(6, run_reaction_to_steady_state("aabAAB").len());
-        assert_eq!(10, run_reaction_to_steady_state("dabAcCaCBAcCcaDA").len());
+        assert_eq!(0, react("").len());
+        assert_eq!(0, react("aA").len());
+        assert_eq!(0, react("abBA").len());
+        assert_eq!(4, react("abAB").len());
+        assert_eq!(6, react("aabAAB").len());
+        assert_eq!(10, react("dabAcCaCBAcCcaDA").len());
     }
 
     #[test]
     fn given_part2_input() {
-        assert_eq!(4, part2(&run_reaction_to_steady_state("dabAcCaCBAcCcaDA")));
+        assert_eq!(4, part2(&react("dabAcCaCBAcCcaDA")));
     }
 }
