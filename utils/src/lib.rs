@@ -6,6 +6,8 @@ use std::path::Path;
 use std::str::FromStr;
 use std::string::ToString;
 
+pub mod nom_parsers;
+
 /// Return an iterator over the lines in the given file.
 ///
 /// Performs an extra copy in order to return an owned value. Do it yourself if you really care
