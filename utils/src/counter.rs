@@ -5,6 +5,7 @@ use std::hash::Hash;
 use std::iter::{FromIterator, IntoIterator};
 use std::ops::{Add, AddAssign, Index};
 
+/// Worse implementation of counter crate
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct Counter<T>
 where
