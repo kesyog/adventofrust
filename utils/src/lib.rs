@@ -6,6 +6,7 @@ use std::path::Path;
 use std::str::FromStr;
 use std::string::ToString;
 
+pub mod counter;
 pub mod nom_parsers;
 
 /// Return an iterator over the lines in the given file.
