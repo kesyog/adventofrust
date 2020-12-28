@@ -1,14 +1,19 @@
 //! Solution to [AoC 2018 Day 4](https://adventofcode.com/2018/day/4)
 
+use counter::Counter;
 use regex::Regex;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 use std::default::Default;
 use std::iter::Iterator;
-use utils::counter::Counter;
 
 #[derive(Debug, PartialEq, Eq, Hash, Copy, Clone, Default)]
 struct Guard(usize);
+
+/// Like Counter::most_common but returns just the most common item rather than trying to sort the whole map
+fn find_most_common(counter: &Counter<Guard, usize>) -> Option<(&Guard, &usize)> {
+    counter.iter().max_by_key(|(_, &v)| v)
+}
 
 /// Find the guard that slept the most. Then find the minute _that_ guard slept the most.
 /// Return the product of the two as desired by the problem.
@@ -18,10 +23,10 @@ fn part1(minute_counters: &[Counter<Guard>]) -> usize {
         minute_counters
             .iter()
             .fold(Counter::new(), |mut acc, element| {
-                acc += element;
+                acc.extend(element);
                 acc
             });
-    let target_guard = guard_counter.find_max_count().unwrap().0;
+    let target_guard = find_most_common(&guard_counter).unwrap().0;
     let target_minute = minute_counters
         .iter()
         .enumerate()
@@ -38,7 +43,7 @@ fn part2(minute_counters: &[Counter<Guard>]) -> usize {
         .iter()
         .enumerate()
         .filter_map(|(minute, counter)| {
-            if let Some((guard, count)) = counter.find_max_count() {
+            if let Some((guard, count)) = find_most_common(counter) {
                 Some((minute, *guard, *count))
             } else {
                 // Filter out minutes where no guards slept
@@ -71,7 +76,7 @@ fn store_sleep_data(mut sorted_logs: BinaryHeap<Reverse<&str>>) -> Vec<Counter<G
             // Cleanup any unlogged sleep minutes from the previous guard
             if let (Some(last_guard), Some(last_sleep_time)) = (active_guard, start_sleep_time) {
                 for counter in &mut per_minute_counters[last_sleep_time..60] {
-                    counter.add(last_guard)
+                    counter[&last_guard] += 1;
                 }
                 start_sleep_time = None;
             }
@@ -82,7 +87,7 @@ fn store_sleep_data(mut sorted_logs: BinaryHeap<Reverse<&str>>) -> Vec<Counter<G
             assert_ne!(start_sleep_time, None);
 
             for counter in &mut per_minute_counters[start_sleep_time.unwrap()..minute] {
-                counter.add(active_guard.unwrap());
+                counter[&active_guard.unwrap()] += 1;
             }
             start_sleep_time = None;
         } else {
