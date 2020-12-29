@@ -5,3 +5,6 @@ members = [
   "utils",
 ]
 
+[profile.test]
+# Some tests run super slowly without optimization. Sign of great algorithms 💀
+opt-level = 3
