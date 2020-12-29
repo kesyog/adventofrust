@@ -9,6 +9,7 @@ edition = "2018"
 anyhow = "^1.0"
 counter = "^0.5.2"
 itertools = "^0.4.6"
+ndarray = "^0.14.0"
 nom = "^6.0.1"
 regex = "^1.4.2"
 utils = { path = "../utils" }
@@ -40,3 +41,7 @@ path = "src/day6.rs"
 [[bin]]
 name = "2018-day10"
 path = "src/day10.rs"
+
+[[bin]]
+name = "2018-day11"
+path = "src/day11.rs"
