@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-fn part1(ids: &[String]) -> usize {
+fn part1(ids: &[&str]) -> usize {
     let mut n_twos = 0;
     let mut n_threes = 0;
     for id in ids {
@@ -35,7 +35,7 @@ fn part1(ids: &[String]) -> usize {
 }
 
 /// Find the two ids that differ by only one character when compared element-by-element
-fn part2(ids: &[String]) -> String {
+fn part2(ids: &[&str]) -> String {
     for (i, id1) in ids.iter().take(ids.len() - 1).enumerate() {
         for id2 in ids[i + 1..].iter() {
             assert_eq!(id1.len(), id2.len());
@@ -62,9 +62,13 @@ fn part2(ids: &[String]) -> String {
     panic!("No solution found");
 }
 
+fn parse_ids(input: &str) -> Vec<&str> {
+    utils::trim_and_split(input, "\n").into_iter().collect()
+}
+
 fn main() {
     let input = include_str!("../inputs/day2.txt");
-    let ids = utils::trim_and_split(input, "\n");
+    let ids = parse_ids(input);
 
     println!("Part 1: {}", part1(&ids));
     println!("Part 2: {}", part2(&ids));
@@ -85,7 +89,7 @@ mod tests {
             abcdee
             ababab
             "#;
-        let ids = utils::trim_and_split(TEST_INPUT, "\n");
+        let ids = parse_ids(TEST_INPUT);
         assert_eq!(12, part1(&ids));
     }
 
@@ -100,7 +104,7 @@ mod tests {
             axcye
             wvxyz
             "#;
-        let ids = utils::trim_and_split(TEST_INPUT, "\n");
+        let ids = parse_ids(TEST_INPUT);
         assert_eq!("fgij", part2(&ids));
     }
 }

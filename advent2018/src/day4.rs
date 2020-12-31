@@ -102,7 +102,10 @@ fn store_sleep_data(mut sorted_logs: BinaryHeap<Reverse<&str>>) -> Vec<Counter<G
 /// Parse input log file into sorted binary min-heap. Relies on lexographically sorting the lines of
 /// the input to sort the logs chronologically.
 fn parse_to_heap(input: &str) -> BinaryHeap<Reverse<&str>> {
-    input.trim().split_terminator('\n').map(Reverse).collect()
+    utils::trim_and_split(input, "\n")
+        .into_iter()
+        .map(Reverse)
+        .collect()
 }
 
 fn main() {
