@@ -32,7 +32,7 @@ impl Pots {
         Self {
             pots: Self::add_border(pots.into_iter()).collect(),
             plant_rules: plant_rules.into_iter().collect(),
-            start_idx: -1 * i64::try_from(Self::BORDER.len()).unwrap(),
+            start_idx: -i64::try_from(Self::BORDER.len()).unwrap(),
         }
     }
 
@@ -46,7 +46,7 @@ impl Pots {
         // RULE_OFFSET
         'windows: for (i, window) in self.pots.windows(RULE_LENGTH).enumerate() {
             for rule in &self.plant_rules {
-                if window.clone().eq(rule) {
+                if window == rule {
                     *new_pots.get_mut(i).unwrap() = true;
                     continue 'windows;
                 }
@@ -158,7 +158,7 @@ fn part2(pots: &mut Pots) -> i64 {
     pots.step();
     let sum2 = pots.sum_plant_indices();
 
-    let slope: i64 = i64::try_from(sum2 - sum1).unwrap();
+    let slope = sum2 - sum1;
     let offset = sum1 - slope * i64::try_from(n_steps).unwrap();
     slope * 50_000_000_000 + offset
 }

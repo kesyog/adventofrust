@@ -14,8 +14,7 @@ fn hundredths_place(n: usize) -> u8 {
 fn cell_power(x: usize, y: usize, serial: GridSerial) -> i32 {
     let rack_id = x + 10;
     let power: usize = (rack_id * y + usize::from(serial)) * rack_id;
-    let power = i32::from(hundredths_place(power)) - 5;
-    power
+    i32::from(hundredths_place(power)) - 5
 }
 
 /// Create 300x300 grid of power values
