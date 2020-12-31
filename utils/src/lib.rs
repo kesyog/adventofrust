@@ -4,7 +4,6 @@ use std::fmt::Debug;
 use std::iter::IntoIterator;
 use std::str::FromStr;
 
-pub mod counter;
 pub mod nom_parsers;
 
 /// Return an iterator over the given file split by the given pattern. All leading and trailing
