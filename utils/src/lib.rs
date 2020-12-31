@@ -20,11 +20,20 @@ pub fn get_lines_from_file(path: &str) -> Vec<String> {
         .collect()
 }
 
+//TODO: remove this to reduce unnecessary copies
 pub fn trim_and_split(string: &str, split: &str) -> Vec<String> {
     string
         .trim()
         .split_terminator(split)
         .map(|s| s.trim().to_string())
+        .collect()
+}
+
+pub fn trim_and_split_borrowed<'a>(string: &'a str, split: &str) -> Vec<&'a str> {
+    string
+        .trim()
+        .split_terminator(split)
+        .map(|s| s.trim())
         .collect()
 }
 
