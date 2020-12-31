@@ -53,9 +53,8 @@ fn part2(claims: &[Claim], overlapping: &HashSet<(usize, usize)>) -> u32 {
 /// Parse input file into a list of [Claims](Claim). Each line of the file describes a different [Claim].
 fn parse_claims(input: &str) -> Vec<Claim> {
     let re = Regex::new(r"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)").unwrap();
-    let input = utils::trim_and_split(input, "\n");
-    input
-        .iter()
+    utils::trim_and_split(input, "\n")
+        .into_iter()
         .map(|line| {
             let captures = re.captures(line).unwrap();
             Claim {

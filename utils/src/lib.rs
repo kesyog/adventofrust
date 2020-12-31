@@ -1,40 +1,16 @@
 use num_integer::Integer;
 use regex::Regex;
 use std::fmt::Debug;
-use std::fs;
-use std::path::Path;
+use std::iter::IntoIterator;
 use std::str::FromStr;
-use std::string::ToString;
 
 pub mod counter;
 pub mod nom_parsers;
 
-/// Return an iterator over the lines in the given file.
-///
-/// Performs an extra copy in order to return an owned value. Do it yourself if you really care
-/// about speed
-pub fn get_lines_from_file(path: &str) -> Vec<String> {
-    let data = fs::read_to_string(Path::new(path)).unwrap();
-    data.split_terminator('\n')
-        .map(ToString::to_string)
-        .collect()
-}
-
-//TODO: remove this to reduce unnecessary copies
-pub fn trim_and_split(string: &str, split: &str) -> Vec<String> {
-    string
-        .trim()
-        .split_terminator(split)
-        .map(|s| s.trim().to_string())
-        .collect()
-}
-
-pub fn trim_and_split_borrowed<'a>(string: &'a str, split: &str) -> Vec<&'a str> {
-    string
-        .trim()
-        .split_terminator(split)
-        .map(|s| s.trim())
-        .collect()
+/// Return an iterator over the given file split by the given pattern. All leading and trailing
+/// whitespace are trimmed from the start and end of every line.
+pub fn trim_and_split<'a>(string: &'a str, split: &'a str) -> impl IntoIterator<Item = &'a str> {
+    string.trim().split_terminator(split).map(|s| s.trim())
 }
 
 /// Return a list of all integers in a string
