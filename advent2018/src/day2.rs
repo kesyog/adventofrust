@@ -63,7 +63,7 @@ fn part2(ids: &[&str]) -> String {
 }
 
 fn parse_ids(input: &str) -> Vec<&str> {
-    utils::trim_and_split(input, "\n").into_iter().collect()
+    utils::trim_and_split(input, "\n").collect()
 }
 
 fn main() {

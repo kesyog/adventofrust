@@ -20,7 +20,7 @@ fn part2(readings: &[i32]) -> usize {
 
 fn main() {
     let input = include_str!("../inputs/day1.txt");
-    let input: Vec<i32> = utils::find_all_integers(input);
+    let input: Vec<i32> = utils::parse_lines(input, "\n").collect();
 
     println!("Part 1: {}", part1(&input));
     println!("Part 2: {}", part2(&input));

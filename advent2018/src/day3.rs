@@ -54,7 +54,6 @@ fn part2(claims: &[Claim], overlapping: &HashSet<(usize, usize)>) -> u32 {
 fn parse_claims(input: &str) -> Vec<Claim> {
     let re = Regex::new(r"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)").unwrap();
     utils::trim_and_split(input, "\n")
-        .into_iter()
         .map(|line| {
             let captures = re.captures(line).unwrap();
             Claim {

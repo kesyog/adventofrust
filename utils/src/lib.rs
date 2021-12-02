@@ -1,15 +1,22 @@
 use num_integer::Integer;
 use regex::Regex;
 use std::fmt::Debug;
-use std::iter::IntoIterator;
 use std::str::FromStr;
 
 pub mod nom_parsers;
 
 /// Return an iterator over the given file split by the given pattern. All leading and trailing
 /// whitespace are trimmed from the start and end of every line.
-pub fn trim_and_split<'a>(string: &'a str, split: &'a str) -> impl IntoIterator<Item = &'a str> {
+pub fn trim_and_split<'a>(string: &'a str, split: &'a str) -> impl Iterator<Item = &'a str> {
     string.trim().split_terminator(split).map(|s| s.trim())
+}
+
+pub fn parse_lines<'a, T>(string: &'a str, split: &'a str) -> impl Iterator<Item = T> + 'a
+where
+    T: FromStr,
+    <T as FromStr>::Err: Debug,
+{
+    trim_and_split(string, split).map(|i| i.parse::<T>().unwrap())
 }
 
 /// Return a list of all integers in a string
