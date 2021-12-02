@@ -55,14 +55,18 @@ fn part2(readings: &[(&str, isize)]) -> isize {
     state.x * state.depth
 }
 
-fn main() {
-    let input = include_str!("../inputs/day2.txt");
-    let input: Vec<(&str, isize)> = input
+fn parse_input(input: &str) -> Vec<(&str, isize)> {
+    input
         .trim()
         .lines()
-        .map(|line| line.split_once(" ").unwrap())
+        .map(|line| line.trim().split_once(" ").unwrap())
         .map(|(direction, n)| (direction, n.parse::<isize>().unwrap()))
-        .collect();
+        .collect()
+}
+
+fn main() {
+    let input = include_str!("../inputs/day2.txt");
+    let input = parse_input(input);
 
     println!("Part 1: {}", part1(&input));
     println!("Part 2: {}", part2(&input));
@@ -72,34 +76,24 @@ fn main() {
 mod tests {
     use super::*;
 
-    const INPUT: &str = r#"
-forward 5
-down 5
-forward 8
-up 3
-down 8
-forward 2
-"#;
+    const TEST_INPUT: &str = r#"
+                    forward 5
+                    down 5
+                    forward 8
+                    up 3
+                    down 8
+                    forward 2
+                    "#;
 
     #[test]
     fn given_part1_input() {
-        let input: Vec<(&str, isize)> = INPUT
-            .trim()
-            .lines()
-            .map(|line| line.split_once(" ").unwrap())
-            .map(|(direction, n)| (direction, n.parse::<isize>().unwrap()))
-            .collect();
+        let input = parse_input(TEST_INPUT);
         assert_eq!(part1(&input), 150);
     }
 
     #[test]
     fn given_part2_input() {
-        let input: Vec<(&str, isize)> = INPUT
-            .trim()
-            .lines()
-            .map(|line| line.split_once(" ").unwrap())
-            .map(|(direction, n)| (direction, n.parse::<isize>().unwrap()))
-            .collect();
+        let input = parse_input(TEST_INPUT);
         assert_eq!(part2(&input), 900);
     }
 }
