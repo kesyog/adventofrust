@@ -80,7 +80,7 @@ impl Points {
         self.limits = Default::default();
         for point in &mut self.points {
             point.step();
-            self.limits.update(&point);
+            self.limits.update(point);
         }
     }
 
@@ -88,7 +88,7 @@ impl Points {
         self.limits = Default::default();
         for point in &mut self.points {
             point.step_back();
-            self.limits.update(&point);
+            self.limits.update(point);
         }
     }
 

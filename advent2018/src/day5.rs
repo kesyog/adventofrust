@@ -54,7 +54,7 @@ fn part2(polymer: &str) -> usize {
 
 fn main() {
     let input = include_str!("../inputs/day5.txt").trim();
-    let reacted_polymer = react(&input);
+    let reacted_polymer = react(input);
     println!("Part 1: {}", reacted_polymer.len());
     // Save some time by providing the pre-reduced polymer to part 2
     println!("Part 2: {}", part2(&reacted_polymer));

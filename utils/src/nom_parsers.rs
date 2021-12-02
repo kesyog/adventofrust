@@ -16,7 +16,7 @@ pub fn signed_int(input: &str) -> IResult<&str, i32> {
 }
 
 pub fn coordinates(input: &str) -> IResult<&str, (i32, i32)> {
-    Ok(separated_pair(signed_int, tag(", "), signed_int)(input)?)
+    separated_pair(signed_int, tag(", "), signed_int)(input)
 }
 
 #[cfg(test)]
