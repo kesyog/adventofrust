@@ -1,3 +1,5 @@
+//! Solution to [AoC 2021 Day 1](https://adventofcode.com/2021/day/1)
+
 fn part1(readings: &[i32]) -> usize {
     let mut n_increases = 0;
     for (reading, prev) in readings.iter().skip(1).zip(readings) {
