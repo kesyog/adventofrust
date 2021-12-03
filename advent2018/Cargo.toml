@@ -9,7 +9,7 @@ edition = "2018"
 anyhow = "1.0"
 counter = "0.5.2"
 itertools = "0.4.6"
-ndarray = "0.14.0"
+ndarray = "0.15.4"
 nom = "6"
 regex = "1.5"
 utils = { path = "../utils" }
