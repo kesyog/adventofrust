@@ -3,7 +3,7 @@ name = "advent2018"
 description = "Solutions to Advent of Code 2018"
 version = "0.1.0"
 authors = ["Kesavan Yogeswaran <kesyog@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 anyhow = "1.0"
@@ -41,6 +41,10 @@ path = "src/day6.rs"
 [[bin]]
 name = "2018-day7"
 path = "src/day7.rs"
+
+[[bin]]
+name = "2018-day8"
+path = "src/day8.rs"
 
 [[bin]]
 name = "2018-day10"
