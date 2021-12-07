@@ -7,6 +7,7 @@ edition = "2018"
 
 [dependencies]
 anyhow = "1.0"
+counter = "0.5.2"
 itertools = "0.4.6"
 ndarray = "0.15.4"
 regex = "1.5"
@@ -27,3 +28,7 @@ path = "src/day3.rs"
 [[bin]]
 name = "2021-day4"
 path = "src/day4.rs"
+
+[[bin]]
+name = "2021-day5"
+path = "src/day5.rs"
