@@ -8,7 +8,7 @@ edition = "2018"
 [dependencies]
 anyhow = "1.0"
 counter = "0.5.2"
-itertools = "0.4.6"
+itertools = "0.10.3"
 ndarray = "0.15.4"
 regex = "1.5"
 utils = { path = "../utils" }
@@ -36,3 +36,7 @@ path = "src/day5.rs"
 [[bin]]
 name = "2021-day6"
 path = "src/day6.rs"
+
+[[bin]]
+name = "2021-day7"
+path = "src/day7.rs"
