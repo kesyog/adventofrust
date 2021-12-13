@@ -11,6 +11,7 @@ counter = "0.5.2"
 itertools = "0.10.3"
 ndarray = "0.15.4"
 regex = "1.5"
+serde_scan = "0.4.1"
 utils = { path = "../utils" }
 
 [[bin]]
@@ -60,3 +61,7 @@ path = "src/day11.rs"
 [[bin]]
 name = "2021-day12"
 path = "src/day12.rs"
+
+[[bin]]
+name = "2021-day13"
+path = "src/day13.rs"
