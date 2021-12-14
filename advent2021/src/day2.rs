@@ -59,7 +59,7 @@ fn parse_input(input: &str) -> Vec<(&str, isize)> {
     input
         .trim()
         .lines()
-        .map(|line| line.trim().split_once(" ").unwrap())
+        .map(|line| line.trim().split_once(' ').unwrap())
         .map(|(direction, n)| (direction, n.parse::<isize>().unwrap()))
         .collect()
 }
