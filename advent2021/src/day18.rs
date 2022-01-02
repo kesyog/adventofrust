@@ -154,11 +154,11 @@ impl Snailfish {
         // Right-first DFS
         while let Some(index) = to_search.pop_back() {
             match self.get(&index) {
-                Some(Snailfish::Pair(_)) => {
+                Some(Self::Pair(_)) => {
                     to_search.push_back([&index, [Direction::Left].as_slice()].concat());
                     to_search.push_back([&index, [Direction::Right].as_slice()].concat());
                 }
-                Some(Snailfish::Single(value)) => return Some((index.to_owned(), *value)),
+                Some(Self::Single(value)) => return Some((index.to_owned(), *value)),
                 None => continue,
             }
         }
@@ -180,11 +180,11 @@ impl Snailfish {
         // Left-first DFS
         while let Some(index) = to_search.pop_back() {
             match self.get(&index) {
-                Some(Snailfish::Pair(_)) => {
+                Some(Self::Pair(_)) => {
                     to_search.push_back([&index, [Direction::Right].as_slice()].concat());
                     to_search.push_back([&index, [Direction::Left].as_slice()].concat());
                 }
-                Some(Snailfish::Single(value)) => return Some((index.to_owned(), *value)),
+                Some(Self::Single(value)) => return Some((index.to_owned(), *value)),
                 None => continue,
             }
         }
@@ -196,14 +196,14 @@ impl Snailfish {
         let mut to_search = vec![vec![Direction::Right], vec![Direction::Left]];
         while let Some(index) = to_search.pop() {
             match self.get(&index) {
-                Some(Snailfish::Pair(_)) => {
+                Some(Self::Pair(_)) => {
                     if index.len() >= 4 {
                         return Some(index);
                     }
                     to_search.push([&index, [Direction::Right].as_slice()].concat());
                     to_search.push([&index, [Direction::Left].as_slice()].concat());
                 }
-                Some(Snailfish::Single(_)) | None => continue,
+                Some(Self::Single(_)) | None => continue,
             }
         }
         None
@@ -215,18 +215,18 @@ impl Snailfish {
         let to_explode = self
             .find_explodable_pair()
             .ok_or_else(|| anyhow!("No explodable pairs"))?;
-        let old_pair = match mem::replace(&mut self[&to_explode], Snailfish::Single(0)) {
-            Snailfish::Pair(pair) => match *pair {
-                [Snailfish::Single(first), Snailfish::Single(second)] => (first, second),
+        let old_pair = match mem::replace(&mut self[&to_explode], Self::Single(0)) {
+            Self::Pair(pair) => match *pair {
+                [Self::Single(first), Self::Single(second)] => (first, second),
                 _ => panic!("Exploding pair does not contain regular numbers"),
             },
             _ => panic!("trying to explode a single value"),
         };
         if let Some((idx, value)) = self.first_regular_left(&to_explode) {
-            self[&idx] = Snailfish::Single(value + old_pair.0);
+            self[&idx] = Self::Single(value + old_pair.0);
         }
         if let Some((idx, value)) = self.first_regular_right(&to_explode) {
-            self[&idx] = Snailfish::Single(value + old_pair.1);
+            self[&idx] = Self::Single(value + old_pair.1);
         }
 
         Ok(())
@@ -237,11 +237,11 @@ impl Snailfish {
         let mut to_search = vec![vec![Direction::Right], vec![Direction::Left]];
         while let Some(index) = to_search.pop() {
             match self.get(&index) {
-                Some(Snailfish::Pair(_)) => {
+                Some(Self::Pair(_)) => {
                     to_search.push([&index, [Direction::Right].as_slice()].concat());
                     to_search.push([&index, [Direction::Left].as_slice()].concat());
                 }
-                Some(Snailfish::Single(value)) if *value >= 10 => return Some((index, *value)),
+                Some(Self::Single(value)) if *value >= 10 => return Some((index, *value)),
                 _ => continue,
             }
         }
@@ -254,9 +254,9 @@ impl Snailfish {
         let (idx, old_value) = self
             .find_splittable()
             .ok_or_else(|| anyhow!("No splittable numbers"))?;
-        self[&idx] = Snailfish::Pair(Box::new([
-            Snailfish::Single(old_value / 2),
-            Snailfish::Single(((old_value as f64) / 2.0 + 0.5) as isize),
+        self[&idx] = Self::Pair(Box::new([
+            Self::Single(old_value / 2),
+            Self::Single(((old_value as f64) / 2.0 + 0.5) as isize),
         ]));
 
         Ok(())
@@ -269,24 +269,24 @@ impl Snailfish {
         }
     }
 
-    fn get(&self, index: &[Direction]) -> Option<&Snailfish> {
+    fn get(&self, index: &[Direction]) -> Option<&Self> {
         let mut cursor = self;
         for direction in index {
             cursor = match (cursor, direction) {
-                (Snailfish::Pair(pair), Direction::Left) => &pair[0],
-                (Snailfish::Pair(pair), Direction::Right) => &pair[1],
+                (Self::Pair(pair), Direction::Left) => &pair[0],
+                (Self::Pair(pair), Direction::Right) => &pair[1],
                 _ => return None,
             }
         }
         Some(cursor)
     }
 
-    fn get_mut(&mut self, index: &[Direction]) -> Option<&mut Snailfish> {
+    fn get_mut(&mut self, index: &[Direction]) -> Option<&mut Self> {
         let mut cursor = self;
         for direction in index {
             cursor = match (cursor, direction) {
-                (Snailfish::Pair(pair), Direction::Left) => &mut pair[0],
-                (Snailfish::Pair(pair), Direction::Right) => &mut pair[1],
+                (Self::Pair(pair), Direction::Left) => &mut pair[0],
+                (Self::Pair(pair), Direction::Right) => &mut pair[1],
                 _ => return None,
             }
         }
@@ -295,7 +295,7 @@ impl Snailfish {
 }
 
 impl Index<&[Direction]> for Snailfish {
-    type Output = Snailfish;
+    type Output = Self;
 
     fn index(&self, index: &[Direction]) -> &Self::Output {
         self.get(index).expect("Index out of bounds")
@@ -309,10 +309,10 @@ impl IndexMut<&[Direction]> for Snailfish {
 }
 
 impl Add for Snailfish {
-    type Output = Snailfish;
+    type Output = Self;
 
     fn add(self, other: Self) -> Self {
-        let mut sum = Snailfish::Pair(Box::new([self, other]));
+        let mut sum = Self::Pair(Box::new([self, other]));
         sum.reduce();
         sum
     }

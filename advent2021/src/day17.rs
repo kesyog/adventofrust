@@ -26,8 +26,8 @@ enum TimeConstraint {
 impl TimeConstraint {
     fn iter(&self) -> Box<dyn Iterator<Item = usize>> {
         match self {
-            TimeConstraint::Exact(value) => Box::new(std::iter::once(*value)),
-            TimeConstraint::Min(min_bound) => Box::new(*min_bound..),
+            &TimeConstraint::Exact(value) => Box::new(std::iter::once(value)),
+            &TimeConstraint::Min(min_bound) => Box::new(min_bound..),
         }
     }
 }
@@ -35,7 +35,7 @@ impl TimeConstraint {
 /// Calculate y at a given time given an initial velocity
 fn sim_y(t: usize, dy_init: isize) -> isize {
     // y = y0 + t * y - (t-1) * t / 2
-    ((t as isize) * (2 * dy_init + 1) - (t * t) as isize) / 2
+    (isize::try_from(t).unwrap() * (2 * dy_init + 1) - isize::try_from(t * t).unwrap()) / 2
 }
 
 /// Check if there is a valid solution with the given parameters and the given t constraint
@@ -43,7 +43,7 @@ fn search(y_min: isize, y_max: isize, dy_init: isize, t: TimeConstraint) -> bool
     assert!(y_min < y_max);
     for t in t.iter() {
         let y = sim_y(t, dy_init);
-        let dy_dt = dy_init - (t as isize);
+        let dy_dt = dy_init - isize::try_from(t).unwrap();
         if y >= y_min && y <= y_max {
             return true;
         } else if dy_dt <= 0 && y < y_min {
@@ -118,8 +118,8 @@ fn part1(velocities: &HashSet<(isize, isize)>) -> isize {
         // dy/dt = dy_init - t + 1/2
         // Hand-waving over edge cases where there are no solutions where dy_init > 0,
         // the max height is reached around t = dy_init + 1/2
-        max_y = max_y.max(sim_y(dy as usize, dy));
-        max_y = max_y.max(sim_y(dy as usize + 1, dy));
+        max_y = max_y.max(sim_y(usize::try_from(dy).unwrap(), dy));
+        max_y = max_y.max(sim_y(usize::try_from(dy).unwrap() + 1, dy));
     }
     max_y
 }

@@ -1,6 +1,7 @@
 use num_integer::Integer;
 use regex::Regex;
 use std::fmt::Debug;
+use std::ops::Sub;
 use std::str::{self, FromStr};
 
 pub mod nom_parsers;
@@ -20,6 +21,7 @@ where
 }
 
 /// Return a list of all integers in a string
+#[inline]
 pub fn find_all_integers<T>(string: &str) -> Vec<T>
 where
     T: Integer + FromStr,
@@ -29,6 +31,20 @@ where
     re.find_iter(string)
         .map(|m| m.as_str().parse::<T>().unwrap())
         .collect()
+}
+
+/// Return the absolute difference between the two values
+#[inline]
+pub fn abs_diff<T>(a: T, b: T) -> T
+where
+    T: Sub<T, Output = T>,
+    T: PartialOrd,
+{
+    if a > b {
+        a - b
+    } else {
+        b - a
+    }
 }
 
 #[cfg(test)]

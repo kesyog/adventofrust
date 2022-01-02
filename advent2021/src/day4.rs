@@ -65,7 +65,7 @@ impl Board {
         }
 
         if self.state == BoardState::Unfilled && self.bingo() {
-            self.state = BoardState::Bingo
+            self.state = BoardState::Bingo;
         }
         self.state
     }
@@ -73,7 +73,7 @@ impl Board {
     fn bingo(&self) -> bool {
         'cols: for col in 0..5 {
             for row in 0..5 {
-                if !self.indices_drawn.contains(&Board::index_1d(row, col)) {
+                if !self.indices_drawn.contains(&Self::index_1d(row, col)) {
                     continue 'cols;
                 }
             }
@@ -82,7 +82,7 @@ impl Board {
 
         'rows: for row in 0..5 {
             for col in 0..5 {
-                if !self.indices_drawn.contains(&Board::index_1d(row, col)) {
+                if !self.indices_drawn.contains(&Self::index_1d(row, col)) {
                     continue 'rows;
                 }
             }

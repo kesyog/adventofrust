@@ -3,15 +3,17 @@ name = "advent2021"
 description = "Solutions to Advent of Code 2021"
 version = "0.1.0"
 authors = ["Kesavan Yogeswaran <kesyog@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 anyhow = "1.0"
+arrayvec = "0.7"
 counter = "0.5.2"
 itertools = "0.10.3"
 ndarray = "0.15.4"
 regex = "1.5"
 serde_scan = "0.4.1"
+strum = { version = "0.23", features = ["derive"] }
 utils = { path = "../utils" }
 
 [[bin]]
@@ -77,3 +79,7 @@ path = "src/day17.rs"
 [[bin]]
 name = "2021-day18"
 path = "src/day18.rs"
+
+[[bin]]
+name = "2021-day23"
+path = "src/day23.rs"
