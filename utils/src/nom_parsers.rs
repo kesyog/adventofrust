@@ -10,11 +10,13 @@ use nom::{
     IResult,
 };
 
+#[inline]
 pub fn signed_int(input: &str) -> IResult<&str, i32> {
     let signed_integer_parser = recognize(tuple((opt(tag("-")), digit1)));
     map_res(signed_integer_parser, str::parse)(input)
 }
 
+#[inline]
 pub fn coordinates(input: &str) -> IResult<&str, (i32, i32)> {
     separated_pair(signed_int, tag(", "), signed_int)(input)
 }

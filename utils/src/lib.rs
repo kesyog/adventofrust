@@ -8,10 +8,12 @@ pub mod nom_parsers;
 
 /// Return an iterator over the given file split by the given pattern. All leading and trailing
 /// whitespace are trimmed from the start and end of every line.
+#[inline]
 pub fn trim_and_split<'a>(string: &'a str, split: &'a str) -> impl Iterator<Item = &'a str> {
     string.trim().split_terminator(split).map(str::trim)
 }
 
+#[inline]
 pub fn split_and_parse<'a, T>(string: &'a str, split: &'a str) -> impl Iterator<Item = T> + 'a
 where
     T: FromStr,
@@ -37,8 +39,7 @@ where
 #[inline]
 pub fn abs_diff<T>(a: T, b: T) -> T
 where
-    T: Sub<T, Output = T>,
-    T: PartialOrd,
+    T: Sub<T, Output = T> + PartialOrd,
 {
     if a > b {
         a - b
