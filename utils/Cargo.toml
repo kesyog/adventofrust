@@ -6,6 +6,6 @@ authors = ["Kesavan Yogeswaran <kesyog@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-nom = "6.0.1"
+nom = "7"
 num-integer = "0.1"
 regex = "1.4.2"

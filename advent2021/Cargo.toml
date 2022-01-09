@@ -9,8 +9,10 @@ edition = "2021"
 anyhow = "1.0"
 arrayvec = "0.7"
 counter = "0.5.2"
+hex = "0.4.3"
 itertools = "0.10.3"
 ndarray = "0.15.4"
+nom = "7"
 regex = "1.5"
 serde_scan = "0.4.1"
 strum = { version = "0.23", features = ["derive"] }
@@ -75,6 +77,10 @@ path = "src/day14.rs"
 [[bin]]
 name = "2021-day15"
 path = "src/day15.rs"
+
+[[bin]]
+name = "2021-day16"
+path = "src/day16.rs"
 
 [[bin]]
 name = "2021-day17"

@@ -25,9 +25,9 @@ enum TimeConstraint {
 
 impl TimeConstraint {
     fn iter(&self) -> Box<dyn Iterator<Item = usize>> {
-        match self {
-            &TimeConstraint::Exact(value) => Box::new(std::iter::once(value)),
-            &TimeConstraint::Min(min_bound) => Box::new(min_bound..),
+        match *self {
+            TimeConstraint::Exact(value) => Box::new(std::iter::once(value)),
+            TimeConstraint::Min(min_bound) => Box::new(min_bound..),
         }
     }
 }

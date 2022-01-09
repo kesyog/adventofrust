@@ -10,7 +10,7 @@ anyhow = "1.0"
 counter = "0.5.2"
 itertools = "0.10.3"
 ndarray = "0.15.4"
-nom = "6"
+nom = "7"
 regex = "1.5"
 utils = { path = "../utils" }
 
