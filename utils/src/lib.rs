@@ -24,13 +24,13 @@ where
 
 /// Return a list of all integers in a string
 #[inline]
-pub fn find_all_integers<T>(string: &str) -> Vec<T>
+pub fn find_all_integers<T>(string: impl AsRef<str>) -> Vec<T>
 where
     T: Integer + FromStr,
     <T as FromStr>::Err: Debug,
 {
     let re = Regex::new(r"-?\d+").unwrap();
-    re.find_iter(string)
+    re.find_iter(string.as_ref())
         .map(|m| m.as_str().parse::<T>().unwrap())
         .collect()
 }
