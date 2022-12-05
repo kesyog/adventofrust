@@ -3,12 +3,11 @@
 use std::cmp::Reverse;
 
 fn part1(elves: &[Vec<usize>]) -> usize {
-    elves.into_iter().map(|i| i.iter().sum()).max().unwrap()
+    elves.iter().map(|i| i.iter().sum()).max().unwrap()
 }
 
 fn part2(elves: &[Vec<usize>]) -> usize {
-    let mut sums: Vec<Reverse<usize>> =
-        elves.into_iter().map(|i| Reverse(i.iter().sum())).collect();
+    let mut sums: Vec<Reverse<usize>> = elves.iter().map(|i| Reverse(i.iter().sum())).collect();
     sums.sort_unstable();
     sums.into_iter().take(3).map(|i| i.0).sum()
 }
@@ -23,7 +22,7 @@ fn main() {
 
 fn parse_input(input: &str) -> Vec<Vec<usize>> {
     utils::trim_and_split(input, "\n\n")
-        .map(|list| utils::find_all_integers(list))
+        .map(utils::find_all_integers)
         .collect()
 }
 
