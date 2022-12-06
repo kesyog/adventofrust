@@ -8,7 +8,7 @@ authors = ["Kesavan Yogeswaran <kesyog@gmail.com>"]
 
 [dependencies]
 anyhow = "1"
-arrayvec = "0.7"
+counter = "0.5"
 itertools = "0.10"
 regex = "1"
 utils = { path = "../utils" }
@@ -32,3 +32,7 @@ path = "src/day4.rs"
 [[bin]]
 name = "2022-day5"
 path = "src/day5.rs"
+
+[[bin]]
+name = "2022-day6"
+path = "src/day6.rs"
