@@ -67,7 +67,7 @@ fn store_sleep_data(mut sorted_logs: BinaryHeap<Reverse<&str>>) -> Vec<Counter<G
     let mut per_minute_counters: Vec<Counter<Guard>> = Vec::new();
     per_minute_counters.resize_with(60, Default::default);
 
-    while sorted_logs.peek() != None {
+    while sorted_logs.peek().is_some() {
         let line = sorted_logs.pop().unwrap().0.trim();
         let minute = line[15..=16].parse::<usize>().unwrap();
 

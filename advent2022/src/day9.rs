@@ -15,7 +15,7 @@ impl Location {
         Self { x, y }
     }
 
-    fn is_adjacent(&self, other: Location) -> bool {
+    fn is_adjacent(&self, other: Self) -> bool {
         self.x.abs_diff(other.x) <= 1 && self.y.abs_diff(other.y) <= 1
     }
 
@@ -42,10 +42,7 @@ enum Move {
 impl Move {
     fn mag(&self) -> isize {
         *match self {
-            Move::Left(mag) => mag,
-            Move::Right(mag) => mag,
-            Move::Up(mag) => mag,
-            Move::Down(mag) => mag,
+            Self::Left(mag) | Self::Right(mag) | Self::Up(mag) | Self::Down(mag) => mag,
         }
     }
 }
@@ -107,7 +104,7 @@ fn parse_input(input: &str) -> Vec<Move> {
             "L" => Move::Left(mag),
             "U" => Move::Up(mag),
             "D" => Move::Down(mag),
-            _ => panic!("invalid direction: {}", d),
+            _ => panic!("invalid direction: {d}"),
         });
     }
     out

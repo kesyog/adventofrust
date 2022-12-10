@@ -35,12 +35,12 @@ fn points((p1, p2): &Line, include_diag: bool) -> Vec<Point> {
 
 fn part1(lines: &[Line]) -> usize {
     let counts: Counter<_> = lines.iter().flat_map(|i| points(i, false)).collect();
-    counts.into_iter().filter(|(_, &count)| count > 1).count()
+    counts.into_iter().filter(|&(_, count)| count > 1).count()
 }
 
 fn part2(lines: &[Line]) -> usize {
     let counts: Counter<_> = lines.iter().flat_map(|i| points(i, true)).collect();
-    counts.into_iter().filter(|(_, &count)| count > 1).count()
+    counts.into_iter().filter(|&(_, count)| count > 1).count()
 }
 
 fn parse_input(input: &str) -> Vec<Line> {

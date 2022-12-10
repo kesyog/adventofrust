@@ -7,7 +7,7 @@ edition = "2018"
 
 [dependencies]
 num-integer = "0.1"
-regex = "1.5"
+regex = "1"
 utils = { path = "../utils" }
 
 [[bin]]

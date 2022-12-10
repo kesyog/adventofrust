@@ -28,7 +28,7 @@ fn priority(c: char) -> u32 {
     } else if c.is_ascii_lowercase() {
         u32::from(c) - u32::from('a') + 1
     } else {
-        panic!("Invalid character {}", c);
+        panic!("Invalid character {c}");
     }
 }
 

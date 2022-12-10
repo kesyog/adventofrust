@@ -68,8 +68,7 @@ impl FsNode {
     /// Return size of node
     fn size(&self) -> usize {
         *match self {
-            FsNode::Directory { size, .. } => size,
-            FsNode::File { size, .. } => size,
+            Self::Directory { size, .. } | Self::File { size, .. } => size,
         }
     }
 }
@@ -88,7 +87,7 @@ impl Filesystem {
         for line in &terminal[1..] {
             match line {
                 Command::Ls(nodes) => {
-                    ls_cache.insert(pwd.to_path_buf(), nodes.clone());
+                    ls_cache.insert(pwd.clone(), nodes.clone());
                 }
                 Command::Cd(path) => pwd.push(path),
                 Command::CdRoot => pwd = PathBuf::from("/"),
@@ -186,7 +185,7 @@ fn parse_commands(input: &str) -> Vec<Command> {
                 } else {
                     let (size, name) = line.split_once(' ').expect("a file");
                     LsNode::File(PathBuf::from(name), size.parse().unwrap())
-                })
+                });
             }
             Command::Ls(contents)
         } else if cmd == "cd /" {

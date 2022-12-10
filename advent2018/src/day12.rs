@@ -117,7 +117,7 @@ impl FromStr for Pots {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let input: Vec<&str> = utils::trim_and_split(s, "\n").collect();
         // Parse initial state
-        let pots = input.get(0).unwrap().chars().filter_map(|c| match c {
+        let pots = input.first().unwrap().chars().filter_map(|c| match c {
             PLANT => Some(true),
             NO_PLANT => Some(false),
             _ => None,

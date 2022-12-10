@@ -250,25 +250,13 @@ impl Packet {
             Payload::Minimum(subpackets) => subpackets.iter().map(Self::evaluate).min().unwrap(),
             Payload::Maximum(subpackets) => subpackets.iter().map(Self::evaluate).max().unwrap(),
             Payload::GreaterThan(subpackets) => {
-                if subpackets[0].evaluate() > subpackets[1].evaluate() {
-                    1
-                } else {
-                    0
-                }
+                u64::from(subpackets[0].evaluate() > subpackets[1].evaluate())
             }
             Payload::LessThan(subpackets) => {
-                if subpackets[0].evaluate() < subpackets[1].evaluate() {
-                    1
-                } else {
-                    0
-                }
+                u64::from(subpackets[0].evaluate() < subpackets[1].evaluate())
             }
             Payload::Equals(subpackets) => {
-                if subpackets[0].evaluate() == subpackets[1].evaluate() {
-                    1
-                } else {
-                    0
-                }
+                u64::from(subpackets[0].evaluate() == subpackets[1].evaluate())
             }
         }
     }

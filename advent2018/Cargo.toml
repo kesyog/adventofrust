@@ -6,12 +6,12 @@ authors = ["Kesavan Yogeswaran <kesyog@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-anyhow = "1.0"
-counter = "0.5.2"
-itertools = "0.10.3"
-ndarray = "0.15.4"
+anyhow = "1"
+counter = "0.5"
+itertools = "0.10"
+ndarray = "0.15"
 nom = "7"
-regex = "1.5"
+regex = "1"
 utils = { path = "../utils" }
 
 [[bin]]

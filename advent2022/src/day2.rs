@@ -16,20 +16,20 @@ impl Throw {
     }
 
     /// Return the throw that beats the input
-    fn beats(&self) -> Throw {
+    fn beats(&self) -> Self {
         match self {
-            Throw::Rock => Throw::Scissors,
-            Throw::Paper => Throw::Rock,
-            Throw::Scissors => Throw::Paper,
+            Self::Rock => Self::Scissors,
+            Self::Paper => Self::Rock,
+            Self::Scissors => Self::Paper,
         }
     }
 
     /// Return the throw that loses to the input
-    fn loses(&self) -> Throw {
+    fn loses(&self) -> Self {
         match self {
-            Throw::Rock => Throw::Paper,
-            Throw::Paper => Throw::Scissors,
-            Throw::Scissors => Throw::Rock,
+            Self::Rock => Self::Paper,
+            Self::Paper => Self::Scissors,
+            Self::Scissors => Self::Rock,
         }
     }
 }

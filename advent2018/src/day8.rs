@@ -108,7 +108,6 @@ mod part2 {
 
 fn parse_input(input: &str) -> Vec<i32> {
     input
-        .trim()
         .split_whitespace()
         .map(|i| i.parse::<i32>().unwrap())
         .collect()

@@ -21,7 +21,7 @@ impl Point {
     }
 
     fn manhattan_distance(&self, other: &Self) -> u32 {
-        (self.x - other.x).abs() as u32 + (self.y - other.y).abs() as u32
+        (self.x - other.x).unsigned_abs() + (self.y - other.y).unsigned_abs()
     }
 
     fn total_manhattan_distance(&self, others: &[Self]) -> u32 {

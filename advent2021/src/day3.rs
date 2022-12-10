@@ -56,10 +56,7 @@ fn oxygen_generator_rating(mut input: Vec<&str>) -> u64 {
     let mut bit_position: usize = 0;
     while input.len() > 1 {
         let bit = most_common_bit(&input, bit_position);
-        input = input
-            .into_iter()
-            .filter(|line| line.chars().nth(bit_position) == Some(bit))
-            .collect();
+        input.retain(|line| line.chars().nth(bit_position) == Some(bit));
         bit_position += 1;
     }
     u64::from_str_radix(input[0], 2).unwrap()
@@ -69,10 +66,7 @@ fn co2_scrubber_rating(mut input: Vec<&str>) -> u64 {
     let mut bit_position: usize = 0;
     while input.len() > 1 {
         let bit = flip_bit(most_common_bit(&input, bit_position));
-        input = input
-            .into_iter()
-            .filter(|line| line.chars().nth(bit_position) == Some(bit))
-            .collect();
+        input.retain(|line| line.chars().nth(bit_position) == Some(bit));
         bit_position += 1;
     }
     u64::from_str_radix(input[0], 2).unwrap()

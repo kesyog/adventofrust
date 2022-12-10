@@ -129,7 +129,7 @@ impl WorkQueue {
     fn tick(&mut self) -> Option<char> {
         let ready: Vec<char> = self.workers.iter_mut().filter_map(|i| i.tick()).collect();
         assert!(ready.len() <= 1);
-        ready.get(0).copied()
+        ready.first().copied()
     }
 
     /// Assign a node to the work queue, returning `Ok` if the node was assigned or `Err` otherwise
