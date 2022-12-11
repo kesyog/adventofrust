@@ -11,6 +11,7 @@ anyhow = "1"
 counter = "0.5"
 itertools = "0.10"
 lending-iterator = "0.1"
+once_cell = "1"
 regex = "1"
 utils = { path = "../utils" }
 
@@ -53,3 +54,7 @@ path = "src/day9.rs"
 [[bin]]
 name = "2022-day10"
 path = "src/day10.rs"
+
+[[bin]]
+name = "2022-day11"
+path = "src/day11.rs"
