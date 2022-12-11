@@ -1,6 +1,7 @@
 //! Solution to [AoC 2022 Day 11](https://adventofcode.com/2022/day/11)
 
 use std::cell::Cell;
+use std::ops::Mul;
 use std::rc::Rc;
 
 use once_cell::sync::Lazy;
@@ -10,8 +11,8 @@ use regex::Regex;
 struct Monkey {
     items: Vec<usize>,
     // Use Rc to make Monkey cloneable
-    op: Rc<dyn Fn(usize) -> usize>,
-    test: Rc<dyn Fn(usize) -> usize>,
+    inspect: Rc<dyn Fn(usize) -> usize>,
+    find_target: Rc<dyn Fn(usize) -> usize>,
     divisor: usize,
 }
 
@@ -21,8 +22,8 @@ impl Default for Monkey {
         let dummy_fn = Rc::new(|_: usize| 0_usize);
         Self {
             items: Vec::default(),
-            op: dummy_fn.clone(),
-            test: dummy_fn,
+            inspect: dummy_fn.clone(),
+            find_target: dummy_fn,
             divisor: 0,
         }
     }
@@ -45,14 +46,14 @@ enum OpArg {
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 enum Operation {
     Add,
-    Mul,
+    Multiply,
 }
 
 impl Operation {
     fn exec(self, arg1: usize, arg2: usize) -> usize {
         match self {
             Operation::Add => arg1 + arg2,
-            Operation::Mul => arg1 * arg2,
+            Operation::Multiply => arg1 * arg2,
         }
     }
 }
@@ -68,20 +69,25 @@ where
     cell.set(contents);
 }
 
-fn part1(mut monkeys: Vec<Monkey>) -> usize {
+// Common code from part1 and part2
+fn helper(
+    monkeys: &mut [Monkey],
+    worry_factor: usize,
+    modulo_base: usize,
+    num_rounds: usize,
+) -> usize {
     // We want to be able to mutate the active monkey while also mutating other monkeys in the
     // array (when throwing items to other monkeys). Treat the monkey Vec as a slice of Cells to
     // prove to the borrow checker that we aren't doing any unsafe monkey business.
-    let monkeys = Cell::from_mut(monkeys.as_mut_slice()).as_slice_of_cells();
-    let num_turns = 20;
+    let monkeys = Cell::from_mut(monkeys).as_slice_of_cells();
     let mut counts = vec![0; monkeys.len()];
-    for _ in 0..num_turns {
+    for _ in 0..num_rounds {
         for (i, monkey) in monkeys.iter().enumerate() {
             cell_update(monkey, |monkey| {
                 counts[i] += monkey.items.len();
                 for item in monkey.items.drain(..) {
-                    let worry_level = (monkey.op)(item) / 3;
-                    let new_monkey_idx = (monkey.test)(worry_level);
+                    let worry_level = (monkey.inspect)(item) / worry_factor % modulo_base;
+                    let new_monkey_idx = (monkey.find_target)(worry_level);
                     // We'd need extra logic if it were possible for a monkey to keep an item
                     // Lazily add this assert to make sure we don't need to account for that
                     // possibility
@@ -94,62 +100,34 @@ fn part1(mut monkeys: Vec<Monkey>) -> usize {
         }
     }
     counts.sort_unstable();
-    counts
-        .into_iter()
-        .rev()
-        .take(2)
-        .reduce(|acc, i| acc * i)
-        .unwrap()
+    counts.into_iter().rev().take(2).reduce(Mul::mul).unwrap()
+}
+
+fn part1(mut monkeys: Vec<Monkey>) -> usize {
+    helper(&mut monkeys, 3, usize::MAX, 20)
 }
 
 fn part2(mut monkeys: Vec<Monkey>) -> usize {
     // Given:
-    // 1. Unproven but empirically true: x % a = (x % (a * b)) % a
-    //    TODO: find a proof
-    // 2. Modular multiplication and addition are distributive, i.e.
+    // 1. Modular multiplication and addition are distributive, i.e.
     //    (a + b) % n = ((a % n) + (b % n)) % n
     //    (a * b) % n = ((a % n) * (b % n)) % n
+    // 2. x % a = (x % (a * b)) % a
+    //    Proof:
+    //    x % a = r1 -> a * k1 + r1 = x -> r1 = x - a * k1
+    //    x & (a * b) = r2 -> a * b * k2 + r2 = x -> r2 = x - a * b * k2
+    //    (x % (a * b)) % a = r2 % a = (x - a * b * k2) % a = x % a - (a * b * k2) % a = x % a
     // 3. All of the divisors are coprime
     //
     // Then:
     // We can do all of our math modulo the product of all of the divisors without changing the
     // outcome of any of the divisibility tests.
     let divisor_product: usize = monkeys.iter().map(|m| m.divisor).product();
-    // We want to be able to mutate the active monkey while also mutating other monkeys in the
-    // array (when throwing items to other monkeys). Treat the monkey Vec as a slice of Cells to
-    // prove to the borrow checker that we aren't doing any unsafe monkey business.
-    let monkeys = Cell::from_mut(monkeys.as_mut_slice()).as_slice_of_cells();
-    let num_turns = 10000;
-    let mut counts = vec![0; monkeys.len()];
-    for _ in 0..num_turns {
-        for (i, monkey) in monkeys.iter().enumerate() {
-            cell_update(monkey, |monkey| {
-                counts[i] += monkey.items.len();
-                for item in monkey.items.drain(..) {
-                    let worry_level = (monkey.op)(item) % divisor_product;
-                    let new_monkey_idx = (monkey.test)(worry_level);
-                    // We'd need extra logic if it were possible for a monkey to keep an item
-                    // Lazily add this assert to make sure we don't need to account for that
-                    // possibility
-                    assert_ne!(new_monkey_idx, i);
-                    cell_update(&monkeys[new_monkey_idx], |target| {
-                        target.items.push(worry_level);
-                    });
-                }
-            });
-        }
-    }
-    counts.sort_unstable();
-    counts
-        .into_iter()
-        .rev()
-        .take(2)
-        .reduce(|acc, i| acc * i)
-        .unwrap()
+    helper(&mut monkeys, 1, divisor_product, 10000)
 }
 
-/// Create a closure that implements a monkey's operation
-fn make_op(arg1: OpArg, op: Operation, arg2: OpArg) -> Rc<dyn Fn(usize) -> usize> {
+/// Create a closure that implements a monkey's inspection operation
+fn make_inspect_fn(arg1: OpArg, op: Operation, arg2: OpArg) -> Rc<dyn Fn(usize) -> usize> {
     fn make_arg(input: usize, arg: OpArg) -> usize {
         match arg {
             OpArg::Old => input,
@@ -194,7 +172,7 @@ fn parse_input(input: &str) -> Vec<Monkey> {
             .map(OpArg::Usize)
             .unwrap_or(OpArg::Old);
         let operator = match &captures[2] {
-            "*" => Operation::Mul,
+            "*" => Operation::Multiply,
             "+" => Operation::Add,
             _ => panic!("invalid operation"),
         };
@@ -202,7 +180,7 @@ fn parse_input(input: &str) -> Vec<Monkey> {
             .parse::<usize>()
             .map(OpArg::Usize)
             .unwrap_or(OpArg::Old);
-        let op = make_op(arg1, operator, arg2);
+        let inspect = make_inspect_fn(arg1, operator, arg2);
         // Parse divisibility test
         let Some(line) = block.next() else {
             panic!("Invalid input");
@@ -216,7 +194,7 @@ fn parse_input(input: &str) -> Vec<Monkey> {
             panic!("Invalid input");
         };
         let false_target = find_num(line);
-        let test = Rc::new(move |num| {
+        let find_target = Rc::new(move |num| {
             if num % divisor == 0 {
                 true_target
             } else {
@@ -225,8 +203,8 @@ fn parse_input(input: &str) -> Vec<Monkey> {
         });
         out.push(Monkey {
             items,
-            op,
-            test,
+            inspect,
+            find_target,
             divisor,
         });
     }
