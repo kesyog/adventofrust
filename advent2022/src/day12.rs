@@ -36,7 +36,7 @@ impl Grid {
 }
 
 /// Generate a list of cells that we can go to from the current cell
-fn visitors(grid: &Grid, current: usize) -> impl Iterator<Item = usize> + '_ {
+fn to_visit(grid: &Grid, current: usize) -> impl Iterator<Item = usize> + '_ {
     let (row, col) = grid.coords(current);
 
     MOVES.iter().filter_map(move |(drow, dcol)| {
@@ -70,28 +70,25 @@ where
     // BFS + dynamic programming solution
     // Work backwards from the end since there is only ever one possible end. In part 2, there are
     // multiple possible starts.
+
+    // Queue holds (next_idx, length of path to get to that index)
     let mut queue: VecDeque<(usize, usize)> = VecDeque::new();
     let mut best: Vec<Option<usize>> = vec![None; grid.inner.len()];
     best[grid.finish] = Some(0);
-    queue.extend(
-        visitors(grid, grid.finish)
-            .into_iter()
-            .zip(std::iter::repeat(0)),
-    );
+    queue.extend(to_visit(grid, grid.finish).zip(std::iter::repeat(1)));
 
     while let Some((next, prev_len)) = queue.pop_front() {
         if best[next].is_some() {
             // Already found an optimal path to this cell
             continue;
         }
-        best[next] = Some(prev_len + 1);
+        best[next] = Some(prev_len);
         if is_valid_start(next) {
             return best[next].unwrap();
         }
 
         queue.extend(
-            visitors(grid, next)
-                .into_iter()
+            to_visit(grid, next)
                 .filter(|i| best[*i].is_none())
                 .map(|i| (i, prev_len + 1)),
         );
