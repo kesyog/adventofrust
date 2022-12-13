@@ -11,43 +11,49 @@ enum Data {
     Integer(u32),
 }
 
+impl Data {
+    fn to_list(self) -> Data {
+        match self {
+            Data::List(_) => self,
+            Data::Integer(int) => Data::List(vec![Data::Integer(int)]),
+        }
+    }
+}
+
+// Shouldn't derive this since we have a custom Ord implementation. Thanks Clippy.
 impl PartialOrd for Data {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Data {
+    fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
-            (Data::Integer(a), Data::Integer(b)) => a.partial_cmp(b),
-            (Data::List(_), Data::Integer(int)) => {
-                self.partial_cmp(&Data::List(vec![Data::Integer(*int)]))
-            }
-            (Data::Integer(int), Data::List(_)) => {
-                Data::List(vec![Data::Integer(*int)]).partial_cmp(other)
-            }
+            (Data::Integer(a), Data::Integer(b)) => a.cmp(b),
+            (Data::List(_), Data::Integer(_)) => self.cmp(&other.clone().to_list()),
+            (Data::Integer(_), Data::List(_)) => self.clone().to_list().cmp(other),
             (Data::List(list1), Data::List(list2)) => {
                 for pair in list1.iter().zip_longest(list2) {
                     match pair {
-                        EitherOrBoth::Both(i1, i2) => {
-                            let ordering = i1.partial_cmp(i2).unwrap();
-                            if !ordering.is_eq() {
-                                return Some(ordering);
-                            }
-                        }
-                        EitherOrBoth::Left(_) => return Some(Ordering::Greater),
-                        EitherOrBoth::Right(_) => return Some(Ordering::Less),
+                        EitherOrBoth::Both(i1, i2) => match i1.cmp(i2) {
+                            // Defer to next comparisons
+                            Ordering::Equal => (),
+                            ordering => return ordering,
+                        },
+                        EitherOrBoth::Left(_) => return Ordering::Greater,
+                        EitherOrBoth::Right(_) => return Ordering::Less,
                     };
                 }
-                Some(Ordering::Equal)
+                Ordering::Equal
             }
         }
     }
 }
 
-// Shouldn't derive this since we have a custom PartialOrd implementation. Thanks Clippy.
-impl Ord for Data {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.partial_cmp(other).unwrap()
-    }
-}
-
-// Could probably derive this, but defer to the custom PartialOrd implementation just in case
+// Could probably derive this since the derived implementation's test of equality would probably
+// match the behavior of the custom Ord implementation, but defer to the custom implementation just
+// in case
 impl PartialEq for Data {
     fn eq(&self, other: &Self) -> bool {
         self.cmp(other).is_eq()
@@ -74,27 +80,24 @@ fn parse_integer(input: &[u8]) -> (u32, &[u8]) {
 /// Parse a `Data::List` payload out of the input, returning the list and the leftover bytes from the input.
 fn parse_list(mut input: &[u8]) -> (Vec<Data>, &[u8]) {
     let mut out = Vec::new();
-    loop {
-        if input[0] == b']' {
-            break;
-        }
-        if input[0] == b',' {
-            input = &input[1..];
-        }
+    while input[0] != b']' {
         let data;
         (data, input) = parse_data(input);
         out.push(data);
+
+        if input[0] == b',' {
+            input = &input[1..];
+        }
     }
-    (out, input)
+    // Skip closing brace
+    (out, &input[1..])
 }
 
 /// Parse a `Data` out of the input, returning the Data and the leftover bytes from the input.
 // Stole the shape of this parser function from nom so probably could just nom
 fn parse_data(input: &[u8]) -> (Data, &[u8]) {
     if input[0] == b'[' {
-        let (list, mut rest) = parse_list(&input[1..]);
-        // Skip closing brace
-        rest = &rest[1..];
+        let (list, rest) = parse_list(&input[1..]);
         (Data::List(list), rest)
     } else if input[0].is_ascii_digit() {
         let (integer, rest) = parse_integer(input);
