@@ -142,7 +142,7 @@ impl<const N: usize> Burrow<N> {
             .filter_map(|(i, cell)| cell.as_ref().map(|cell| (i, cell)))
         {
             let entrance_idx = Self::entrance_idx(*pod);
-            estimate += pod.cost(utils::abs_diff(entrance_idx, i) + 2);
+            estimate += pod.cost(entrance_idx.abs_diff(i) + 2);
         }
         // Approximate cost to move amphipods from their current incorrect room to the correct room
         for source_room_id in AmphipodKind::iter() {
@@ -153,8 +153,7 @@ impl<const N: usize> Burrow<N> {
             }
             for pod in source_room.iter().filter(|i| **i != source_room_id) {
                 estimate += pod.cost(
-                    utils::abs_diff(Self::entrance_idx(source_room_id), Self::entrance_idx(*pod))
-                        + 2,
+                    Self::entrance_idx(source_room_id).abs_diff(Self::entrance_idx(*pod)) + 2,
                 );
             }
         }
@@ -214,7 +213,7 @@ impl<const N: usize> Burrow<N> {
                 let (pod, n_moves_pop) = self.room_mut(source_room_kind).pop().unwrap();
                 debug_assert!(pod == target_kind);
                 let n_moves_insert = self.room_mut(target_kind).insert(target_kind).unwrap();
-                let n_moves_hallway = utils::abs_diff(target_entrance_idx, source_entrance_idx);
+                let n_moves_hallway = target_entrance_idx.abs_diff(source_entrance_idx);
                 return Some(target_kind.cost(n_moves_pop + n_moves_hallway + n_moves_insert));
             }
         }

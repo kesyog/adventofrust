@@ -12,7 +12,7 @@ enum Data {
 }
 
 impl Data {
-    fn to_list(self) -> Data {
+    fn into_list(self) -> Data {
         match self {
             Data::List(_) => self,
             Data::Integer(int) => Data::List(vec![Data::Integer(int)]),
@@ -31,8 +31,8 @@ impl Ord for Data {
     fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
             (Data::Integer(a), Data::Integer(b)) => a.cmp(b),
-            (Data::List(_), Data::Integer(_)) => self.cmp(&other.clone().to_list()),
-            (Data::Integer(_), Data::List(_)) => self.clone().to_list().cmp(other),
+            (Data::List(_), Data::Integer(_)) => self.cmp(&other.clone().into_list()),
+            (Data::Integer(_), Data::List(_)) => self.clone().into_list().cmp(other),
             (Data::List(list1), Data::List(list2)) => {
                 for pair in list1.iter().zip_longest(list2) {
                     match pair {

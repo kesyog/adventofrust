@@ -1,7 +1,6 @@
 use num_integer::Integer;
 use regex::Regex;
 use std::fmt::Debug;
-use std::ops::Sub;
 use std::str::{self, FromStr};
 
 pub mod nom_parsers;
@@ -33,19 +32,6 @@ where
     re.find_iter(string.as_ref())
         .map(|m| m.as_str().parse::<T>().unwrap())
         .collect()
-}
-
-/// Return the absolute difference between the two values
-#[inline]
-pub fn abs_diff<T>(a: T, b: T) -> T
-where
-    T: Sub<T, Output = T> + PartialOrd,
-{
-    if a > b {
-        a - b
-    } else {
-        b - a
-    }
 }
 
 #[cfg(test)]
