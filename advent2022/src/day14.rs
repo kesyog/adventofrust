@@ -1,74 +1,90 @@
 //! Solution to [AoC 2022 Day 14](https://adventofcode.com/2022/day/14)
 
-use std::collections::HashSet;
-
-type Point = (isize, isize);
-type Grid = HashSet<Point>;
+use std::collections::{HashMap, HashSet, VecDeque};
 
 const START: Point = (500, 0);
 
-fn add_line(grid: &mut Grid, (x1, y1): Point, (x2, y2): Point) {
+type Point = (isize, isize);
+
+struct Grid {
+    set: HashSet<Point>,
+    bottom_row: isize,
+}
+
+impl Grid {
+    fn new(set: HashSet<Point>) -> Self {
+        let bottom_row = set.iter().max_by_key(|(_x, y)| y).unwrap().1;
+        Self { set, bottom_row }
+    }
+}
+
+fn add_line(set: &mut HashSet<Point>, (x1, y1): Point, (x2, y2): Point) {
     if x1 == x2 {
         for y in y1.min(y2)..=y1.max(y2) {
-            grid.insert((x1, y));
+            set.insert((x1, y));
         }
     } else if y1 == y2 {
         for x in x1.min(x2)..=x1.max(x2) {
-            grid.insert((x, y1));
+            set.insert((x, y1));
         }
     }
 }
 
-fn advance_sand(grid: &Grid, (x, y): Point, floor: Option<isize>) -> Option<Point> {
-    let moves = [(0, 1), (-1, 1), (1, 1)];
-    for (dx, dy) in moves {
-        let new_loc = (x + dx, y + dy);
-        if !grid.contains(&new_loc) && new_loc.1 < floor.unwrap_or(isize::MAX) {
-            return Some(new_loc);
-        }
-    }
-    None
+fn children((x, y): Point) -> impl DoubleEndedIterator<Item = Point> {
+    [(0, 1), (-1, 1), (1, 1)]
+        .into_iter()
+        .map(move |(dx, dy)| (x + dx, y + dy))
 }
 
-// This runs kinda slow
-// TODO: Use an array to back the grid to skip hashing
-// TODO: Try using the path of the last grain of sand to inform the path of the next one
-fn part1(mut grid: Grid) -> isize {
-    let bottom_row = grid.iter().max_by_key(|(_x, y)| y).unwrap().1;
+// After some reading on DFS, I realized we can solve this by doing a post-order DFS search,
+// counting the number of nodes visited until we find a spot where sand will overflow. Each
+// node has three children representing the three potential paths, though we prune paths that lead
+// to rocks. We keep track of the number of nodes visited before we reach the bottom row of rocks.
+// Iterative post-order DFS pseudocode stolen from https://www.geeksforgeeks.org/postorder-traversal-binary-tree-without-recursion-without-stack
+// and adapted to work with a ternary tree.
+fn part1(rocks: &Grid) -> usize {
+    let mut node = START;
+    let mut n_visited = 0;
+    // Child -> parent map used both to keep track of parent-child relationships and to keep track
+    // of visited nodes
+    let mut parent_map: HashMap<Point, Point> = HashMap::new();
 
-    for count in 0.. {
-        let mut sand = START;
-        loop {
-            let Some(new_loc) = advance_sand(&grid, sand, None) else {
-                    grid.insert(sand);
-                    break;
-            };
-            if new_loc.1 >= bottom_row {
-                return count;
-            }
-            sand = new_loc;
+    while node.1 < rocks.bottom_row {
+        // Traverse to unvisited child nodes
+        if let Some(neighbor) =
+            children(node).find(|c| !rocks.set.contains(c) && !parent_map.contains_key(c))
+        {
+            parent_map.insert(neighbor, node);
+            node = neighbor;
+            continue;
         }
+        // There are no more valid child nodes i.e sand will settle here
+        n_visited += 1;
+        // Backtrack to the parent node
+        node = parent_map[&node];
     }
-    unreachable!();
+    n_visited
 }
 
-fn part2(mut grid: Grid) -> isize {
-    let floor = grid.iter().max_by_key(|(_x, y)| y).unwrap().1 + 2;
+// Use BFS to find all the squares visitable from the start
+// I stole this clever idea of using BFS from someone else. My initial solution was just a naive
+// 1:1 simulation of the problem.
+fn part2(mut occupied: Grid) -> usize {
+    let floor = occupied.bottom_row + 2;
 
-    for count in 0.. {
-        let mut sand = START;
-        loop {
-            let Some(new_loc) = advance_sand(&grid, sand, Some(floor)) else {
-                    if sand == START {
-                        return count + 1;
-                    }
-                    grid.insert(sand);
-                    break;
-            };
-            sand = new_loc;
+    let mut queue = VecDeque::new();
+    queue.push_back(START);
+
+    let mut n_visited = 0;
+    while let Some(next) = queue.pop_front() {
+        if occupied.set.contains(&next) {
+            continue;
         }
+        n_visited += 1;
+        occupied.set.insert(next);
+        queue.extend(children(next).filter(|p| p.1 < floor));
     }
-    unreachable!();
+    n_visited
 }
 
 fn parse_point(s: &str) -> Point {
@@ -77,24 +93,24 @@ fn parse_point(s: &str) -> Point {
 }
 
 fn parse_input(input: &str) -> Grid {
-    let mut grid = Grid::new();
+    let mut set = HashSet::new();
     for line in input.trim().lines() {
         let mut iter_points = line.split(" -> ").peekable();
         while let Some(p) = iter_points.next() {
             let Some(next) = iter_points.peek() else {
                 break;
             };
-            add_line(&mut grid, parse_point(p), parse_point(next));
+            add_line(&mut set, parse_point(p), parse_point(next));
         }
     }
-    grid
+    Grid::new(set)
 }
 
 fn main() {
     let input = include_str!("../inputs/day14.txt");
     let input = parse_input(input);
 
-    println!("Part 1: {}", part1(input.clone()));
+    println!("Part 1: {}", part1(&input));
     println!("Part 2: {}", part2(input));
 }
 
@@ -110,7 +126,7 @@ mod tests {
     #[test]
     fn given_part1_input() {
         let input = parse_input(TEST_INPUT);
-        assert_eq!(part1(input), 24);
+        assert_eq!(part1(&input), 24);
     }
 
     #[test]
