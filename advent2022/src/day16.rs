@@ -3,6 +3,7 @@
 use anyhow::Error;
 use once_cell::sync::Lazy;
 use petgraph::{graph::NodeIndex, Graph, Undirected};
+use rayon::prelude::*;
 use regex::Regex;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::str::FromStr;
@@ -202,48 +203,41 @@ fn all_valve_sequences(graph: &CaveGraph, time_limit: usize) -> HashSet<Vec<Node
 // Flow release is "linear" i.e. we can add up the flow released by us and the flow released by the
 // elephant.
 //
-// Gross O(n^2) solution :( Runs slowly (~1 min) but still finishes.
+// Gross O(n^2) solution :( Runs slowly (~10s parallelized or ~1min single-threaded with
+// memoization) but still finishes.
 fn part2(graph: &CaveGraph) -> usize {
     let time_left = 26;
     let options = all_valve_sequences(graph, time_left);
-    let mut best = 0;
-    let mut cache: HashMap<Vec<NodeIndex>, usize> = HashMap::new();
 
-    for me in &options {
-        let my_flow = if cache.contains_key(me) {
-            *cache.get(me).unwrap()
-        } else {
-            let value = simulate(graph, me, time_left);
-            cache.insert(me.clone(), value);
-            value
-        };
+    options
+        .par_iter()
+        .map(|me| {
+            let my_flow = simulate(graph, me, time_left);
 
-        // It'd be nice if we could prune this list efficiently somehow.
-        // TODO: I'd _like_ to build up permutations of valves from the leftover valves and prune the
-        // list by backtracking once we've reached the limit, but I haven't figured out how to
-        // structure that.
-        for elephant in &options {
-            // The search space is symmetric. Cut it in half.
-            if elephant.len() > me.len() {
-                continue;
-            }
-            // The elephant shouldn't be opening any valves we're planning to open
-            if elephant.iter().any(|valve| me.contains(valve)) {
-                continue;
-            }
+            // It'd be nice if we could prune this list efficiently somehow.
+            // TODO: I'd _like_ to build up permutations of valves from the leftover valves and prune the
+            // list by backtracking once we've reached the limit, but I haven't figured out how to
+            // structure that.
+            options
+                .par_iter()
+                .filter_map(|elephant| {
+                    // The search space is symmetric. Cut it in half.
+                    if elephant.len() > me.len() {
+                        return None;
+                    }
+                    // The elephant shouldn't be opening any valves we're planning to open
+                    if elephant.iter().any(|valve| me.contains(valve)) {
+                        return None;
+                    }
 
-            let elephant_flow = if cache.contains_key(elephant) {
-                *cache.get(elephant).unwrap()
-            } else {
-                let value = simulate(graph, elephant, time_left);
-                cache.insert(elephant.clone(), value);
-                value
-            };
-
-            best = best.max(elephant_flow + my_flow);
-        }
-    }
-    best
+                    let elephant_flow = simulate(graph, elephant, time_left);
+                    Some(elephant_flow + my_flow)
+                })
+                .max()
+                .unwrap()
+        })
+        .max()
+        .unwrap()
 }
 
 fn parse_input(input: &str) -> CaveGraph {

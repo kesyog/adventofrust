@@ -13,6 +13,7 @@ itertools = "0.10"
 lending-iterator = "0.1"
 once_cell = "1"
 petgraph = "0.6"
+rayon = "1"
 regex = "1"
 utils = { path = "../utils" }
 
