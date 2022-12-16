@@ -1,6 +1,6 @@
 //! Solution to [AoC 2022 Day 15](https://adventofcode.com/2022/day/15)
 
-use std::collections::HashSet;
+use itertools::Itertools;
 
 type Point = (isize, isize);
 type Parsed = Vec<Sensor>;
@@ -62,19 +62,47 @@ impl Sensor {
     }
 }
 
-fn part1(input: &Parsed, row: isize) -> usize {
-    let mut out: HashSet<Point> = HashSet::new();
-    let beacons: HashSet<Point> = input.iter().map(|sensor| sensor.beacon).collect();
+fn part1(mut sensors: Parsed, row: isize) -> isize {
+    sensors.sort_unstable_by_key(|sensor| {
+        sensor
+            .beacon_keepout_bounds_on_row(row)
+            // Irrelevant sensors will be filtered out anyway, but throw them at the end of the
+            // array. We'll probably never reach them since we scan left-to-right
+            .map_or(isize::MAX, |(left_bound, _right_bound)| left_bound)
+    });
 
-    // TODO: rather than brute force iterating on each point, use strategy from part2 of sorting
-    // and skipping over whole intervals
-    for sensor in input {
+    let mut count = 0;
+    let mut x: Option<isize> = None;
+    // Similar to part2 strategy, scan through intervals left to right, keeping track of the size
+    // of the keepout area
+    for sensor in &sensors {
         let Some((left_bound, right_bound)) = sensor.beacon_keepout_bounds_on_row(row) else {
             continue;
         };
-        out.extend((left_bound..=right_bound).into_iter().map(|x| (x, row)));
+        if x == None {
+            x = Some(left_bound);
+        }
+        if right_bound < x.unwrap() {
+            continue;
+        }
+        if left_bound > x.unwrap() {
+            x = Some(left_bound);
+        }
+        count += right_bound - x.unwrap() + 1;
+        x = Some(right_bound + 1);
     }
-    out.difference(&beacons).count()
+    let n_beacons_in_row = sensors
+        .iter()
+        .filter_map(|sensor| {
+            if sensor.beacon.1 == row {
+                Some(sensor.beacon)
+            } else {
+                None
+            }
+        })
+        .unique()
+        .count() as isize;
+    count - n_beacons_in_row
 }
 
 fn tuning_frequency(p: Point) -> isize {
@@ -143,7 +171,7 @@ fn main() {
     let input = include_str!("../inputs/day15.txt");
     let input = parse_input(input);
 
-    println!("Part 1: {}", part1(&input, 2_000_000));
+    println!("Part 1: {}", part1(input.clone(), 2_000_000));
     println!("Part 2: {}", part2(input, 4_000_000));
 }
 
@@ -171,7 +199,7 @@ Sensor at x=20, y=1: closest beacon is at x=15, y=3
     #[test]
     fn given_part1_input() {
         let input = parse_input(TEST_INPUT);
-        assert_eq!(part1(&input, 10), 26);
+        assert_eq!(part1(input, 10), 26);
     }
 
     #[test]
