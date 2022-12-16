@@ -79,7 +79,7 @@ fn part1(mut sensors: Parsed, row: isize) -> isize {
         let Some((left_bound, right_bound)) = sensor.beacon_keepout_bounds_on_row(row) else {
             continue;
         };
-        if x == None {
+        if x.is_none() {
             x = Some(left_bound);
         }
         if right_bound < x.unwrap() {

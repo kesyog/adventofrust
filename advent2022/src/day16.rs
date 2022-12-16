@@ -211,7 +211,7 @@ fn part2(graph: &CaveGraph) -> usize {
 
     options
         .par_iter()
-        .map(|me| {
+        .filter_map(|me| {
             let my_flow = simulate(graph, me, time_left);
 
             // It'd be nice if we could prune this list efficiently somehow.
@@ -234,7 +234,6 @@ fn part2(graph: &CaveGraph) -> usize {
                     Some(elephant_flow + my_flow)
                 })
                 .max()
-                .unwrap()
         })
         .max()
         .unwrap()
