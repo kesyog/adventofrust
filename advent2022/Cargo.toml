@@ -15,6 +15,8 @@ once_cell = "1"
 petgraph = "0.6"
 rayon = "1"
 regex = "1"
+strum = { version = "0.24", features = ["derive"] }
+strum_macros = "0.24"
 utils = { path = "../utils" }
 
 [[bin]]
@@ -80,3 +82,8 @@ path = "src/day15.rs"
 [[bin]]
 name = "2022-day16"
 path = "src/day16.rs"
+
+
+[[bin]]
+name = "2022-day17"
+path = "src/day17.rs"
