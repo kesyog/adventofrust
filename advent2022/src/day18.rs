@@ -3,6 +3,7 @@
 use std::collections::HashSet;
 
 use itertools::Itertools;
+use rayon::prelude::*;
 
 type Point = [isize; 3];
 
@@ -31,11 +32,11 @@ fn neighbors(point: Point) -> impl Iterator<Item = Point> {
 fn is_adjacent(a: Point, b: Point) -> bool {
     // Two points are adjacent if they have the same coordinates in two dimensions and the
     // coordinates in the remaining dimension differ by by one
-    let mut equal_per_dim = Vec::new();
-    let mut adjacent_per_dim = Vec::new();
+    let mut equal_per_dim = [false; 3];
+    let mut adjacent_per_dim = [false; 3];
     for dim in 0..3 {
-        equal_per_dim.push(a[dim] == b[dim]);
-        adjacent_per_dim.push(a[dim].abs_diff(b[dim]) == 1);
+        equal_per_dim[dim] = a[dim] == b[dim];
+        adjacent_per_dim[dim] = a[dim].abs_diff(b[dim]) == 1;
     }
     // Use some bitwise math to count booleans:
     // 0 ^ 0 ^ 0 = 0
@@ -57,32 +58,49 @@ fn is_adjacent(a: Point, b: Point) -> bool {
 /// Count adjacent points within the two sets of points
 fn count_adjacencies<I, J>(set1: I, set2: J) -> usize
 where
-    I: IntoIterator<Item = Point>,
-    J: IntoIterator<Item = Point>,
-    J::IntoIter: Clone,
+    I: IntoParallelIterator<Item = Point>,
+    J: IntoParallelIterator<Item = Point>,
+    J::Iter: Clone + Sync,
 {
-    set1.into_iter()
-        .cartesian_product(set2)
-        .filter(|&(p1, p2)| is_adjacent(p1, p2))
-        .count()
+    let iter2 = set2.into_par_iter();
+    set1.into_par_iter()
+        .map(|p1| iter2.clone().filter(|&p2| is_adjacent(p1, p2)).count())
+        .sum()
+}
+
+fn part1(lava: &HashSet<Point>) -> usize {
+    // DFS traverse through set of lava points and count the number of neighbors seen
+    let mut stack = vec![lava.iter().copied().next().unwrap()];
+    let mut n_adjacencies = 0;
+    let mut visited = HashSet::new();
+    while let Some(next) = stack.pop() {
+        visited.insert(next);
+        for neighbor in neighbors(next) {
+            if !lava.contains(&neighbor) || visited.contains(&neighbor) {
+                continue;
+            }
+            n_adjacencies += 1;
+            stack.push(neighbor);
+        }
+    }
+    lava.len() * 6 - 2 * n_adjacencies
 }
 
 /// Returns tuple of answer for parts 1 and 2
 fn both_parts(lava: &[Point]) -> (usize, usize) {
-    // Find part 1 answer via O(n^2) double for loop
-    let total_surface_area =
-        lava.len() * 6 - count_adjacencies(lava.iter().copied(), lava.iter().copied());
+    let lava: HashSet<Point> = lava.iter().copied().collect();
+
+    let total_surface_area = part1(&lava);
 
     // Find the minimum and maximum bounds of lava coordinates in each dimension
     let mut mins = [isize::MAX; 3];
     let mut maxs = [isize::MIN; 3];
-    for p in lava {
+    for p in &lava {
         for dim in 0..3 {
             mins[dim] = mins[dim].min(p[dim]);
             maxs[dim] = maxs[dim].max(p[dim]);
         }
     }
-    let lava: HashSet<Point> = lava.iter().copied().collect();
 
     // Expand lava bounds by one in each direction for each dimension to create a "shell" of known
     // external air points. Pick one of the points in this shell and use DFS to find all air points
@@ -115,7 +133,7 @@ fn both_parts(lava: &[Point]) -> (usize, usize) {
     let internal_air = &(&all_points - &external_air) - &lava;
 
     // Count faces between internal air cubes and lava cubes
-    let internal_adjacencies = count_adjacencies(internal_air, lava.iter().copied());
+    let internal_adjacencies = count_adjacencies(internal_air, lava.par_iter().copied());
 
     (
         total_surface_area,
