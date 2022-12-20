@@ -18,8 +18,9 @@ fn main() {
     let input = include_str!("../inputs/dayDAY.txt");
     let input = parse_input(input);
 
-    println!("Part 1: {}", part1(&input));
-    println!("Part 2: {}", part2(&input));
+    let (p1, p2) = rayon::join(|| part1(&input), || part2(&input));
+    println!("Part 1: {p1}");
+    println!("Part 2: {p2}");
 }
 
 #[cfg(test)]
