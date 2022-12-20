@@ -32,27 +32,15 @@ fn neighbors(point: Point) -> impl Iterator<Item = Point> {
 fn is_adjacent(a: Point, b: Point) -> bool {
     // Two points are adjacent if they have the same coordinates in two dimensions and the
     // coordinates in the remaining dimension differ by by one
-    let mut equal_per_dim = [false; 3];
-    let mut adjacent_per_dim = [false; 3];
+    // Use a bitset to keep track of the equality and adjacency of the two points in each dimension
+    let mut equal_per_dim = 0;
+    let mut adjacent_per_dim = 0;
     for dim in 0..3 {
-        equal_per_dim[dim] = a[dim] == b[dim];
-        adjacent_per_dim[dim] = a[dim].abs_diff(b[dim]) == 1;
+        equal_per_dim = (equal_per_dim & !(1 << dim)) | (u8::from(a[dim] == b[dim]) << dim);
+        adjacent_per_dim =
+            (adjacent_per_dim & !(1 << dim)) | (u8::from(a[dim].abs_diff(b[dim]) == 1) << dim);
     }
-    // Use some bitwise math to count booleans:
-    // 0 ^ 0 ^ 0 = 0
-    // 1 ^ 0 ^ 0 = 1
-    // 1 ^ 1 ^ 0 = 0
-    // 1 ^ 1 ^ 1 = 1
-    let two_dims_equal = !equal_per_dim.iter().copied().reduce(|a, b| a ^ b).unwrap()
-        && equal_per_dim.iter().copied().reduce(|a, b| a | b).unwrap();
-    let one_side_adjacent = adjacent_per_dim
-        .iter()
-        .copied()
-        .reduce(|a, b| a ^ b)
-        .unwrap()
-        && !equal_per_dim.iter().copied().reduce(|a, b| a & b).unwrap();
-
-    two_dims_equal && one_side_adjacent
+    (equal_per_dim.count_ones() == 2) && (adjacent_per_dim.count_ones() == 1)
 }
 
 /// Count adjacent points within the two sets of points
@@ -70,7 +58,7 @@ where
 
 fn part1(lava: &HashSet<Point>) -> usize {
     // DFS traverse through set of lava points and count the number of neighbors seen
-    let mut stack = vec![lava.iter().copied().next().unwrap()];
+    let mut stack: Vec<Point> = lava.iter().copied().collect();
     let mut n_adjacencies = 0;
     let mut visited = HashSet::new();
     while let Some(next) = stack.pop() {
