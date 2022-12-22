@@ -50,6 +50,7 @@ dependencies = [
  "counter",
  "itertools",
  "lending-iterator",
+ "num-complex",
  "once_cell",
  "petgraph",
  "rayon",
