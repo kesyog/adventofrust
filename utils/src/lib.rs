@@ -3,7 +3,10 @@ use regex::Regex;
 use std::fmt::Debug;
 use std::str::{self, FromStr};
 
+pub mod grid;
 pub mod nom_parsers;
+
+pub use grid::Point;
 
 /// Return an iterator over the given file split by the given pattern. All leading and trailing
 /// whitespace are trimmed from the start and end of every line.
