@@ -68,6 +68,7 @@ fn part2(grid: &Grid) -> (usize, usize, usize) {
     max.1
 }
 
+#[cfg(not(test))]
 fn main() {
     let grid_serial: GridSerial = 1788;
     let grid = create_grid(grid_serial);

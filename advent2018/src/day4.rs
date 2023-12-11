@@ -105,6 +105,7 @@ fn parse_to_heap(input: &str) -> BinaryHeap<Reverse<&str>> {
     utils::trim_and_split(input, "\n").map(Reverse).collect()
 }
 
+#[cfg(not(test))]
 fn main() {
     // A neat property of this macro and the parsing implementation is that we only work on
     // references to the string. No copies or allocations are needed until the data is extracted

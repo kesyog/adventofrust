@@ -158,6 +158,7 @@ fn parse(input: &str) -> Points {
     points
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day10.txt");
     let mut points = parse(input);

@@ -114,14 +114,14 @@ fn part1(fs: &Filesystem) -> usize {
     // Find sum of sizes of directories with total size <= 100000
     const THRESHOLD: usize = 100000;
     let mut total_size = 0;
-    let FsNode::Directory{ref children, ..} = fs.root else {
+    let FsNode::Directory { ref children, .. } = fs.root else {
         panic!("Root is not a directory");
     };
 
     // Traverse filesystem tree, arbitrarily using non-recursive BFS
     let mut queue = children.clone();
     while let Some(node) = queue.pop() {
-        let FsNode::Directory{children, size, ..} = node else {
+        let FsNode::Directory { children, size, .. } = node else {
             continue;
         };
         if size <= THRESHOLD {
@@ -136,7 +136,12 @@ fn part2(fs: &Filesystem) -> usize {
     const FS_SPACE: usize = 70000000;
     const NEEDED_FREE_SPACE: usize = 30000000;
 
-    let FsNode::Directory{ref children, size: used_space, ..} = fs.root else {
+    let FsNode::Directory {
+        ref children,
+        size: used_space,
+        ..
+    } = fs.root
+    else {
         panic!("Root is not a directory");
     };
     let free_space = FS_SPACE - used_space;
@@ -148,7 +153,7 @@ fn part2(fs: &Filesystem) -> usize {
     // Traverse filesystem tree, arbitrarily using non-recursive BFS
     let mut queue = children.clone();
     while let Some(node) = queue.pop() {
-        let FsNode::Directory{children, size, ..} = node else {
+        let FsNode::Directory { children, size, .. } = node else {
             continue;
         };
         // No need to traverse into directories that are too small
@@ -206,6 +211,7 @@ fn parse_input(input: &str) -> Filesystem {
     Filesystem::from_commands(&commands)
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day7.txt");
     let input = parse_input(input);

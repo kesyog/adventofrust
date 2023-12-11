@@ -118,6 +118,7 @@ fn parse_input(input: &str) -> Tree {
     points
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day21.txt");
     let input = parse_input(input);

@@ -163,6 +163,7 @@ fn part2(pots: &mut Pots) -> i64 {
     slope * 50_000_000_000 + offset
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day12.txt");
     let mut pots: Pots = input.parse().unwrap();

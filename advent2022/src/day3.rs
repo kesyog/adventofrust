@@ -55,6 +55,7 @@ fn parse_input2(input: &str) -> Vec<(HashSet<char>, HashSet<char>, HashSet<char>
     out
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day3.txt");
     let input1 = parse_input1(input);

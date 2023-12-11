@@ -28,6 +28,7 @@ fn parse_input(input: &str) -> [usize; LIFETIME_INIT + 1] {
     counts
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day6.txt");
     let fish = parse_input(input);

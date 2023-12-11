@@ -103,6 +103,7 @@ fn parse_input(input: &str) -> Grid {
     grid
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day25.txt");
     let input = parse_input(input);

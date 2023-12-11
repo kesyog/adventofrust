@@ -56,6 +56,7 @@ fn parse_input(input: &str) -> Vec<isize> {
     positions
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day7.txt");
     let sorted_positions = parse_input(input);

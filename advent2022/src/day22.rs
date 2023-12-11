@@ -445,6 +445,7 @@ fn parse_input(input: &str) -> (Grid, Vec<Action>) {
     (grid, actions)
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day22.txt");
     let (grid, actions) = parse_input(input);

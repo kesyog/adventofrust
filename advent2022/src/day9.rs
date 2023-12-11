@@ -110,6 +110,7 @@ fn parse_input(input: &str) -> Vec<Move> {
     out
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day9.txt");
     let input = parse_input(input);

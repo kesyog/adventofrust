@@ -33,6 +33,7 @@ fn part2(input: &str) -> Option<usize> {
     find_start_packet(input, 14)
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day6.txt").trim();
 

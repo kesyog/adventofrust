@@ -73,6 +73,7 @@ fn parse_input(input: &str) -> (Vec<Vec<char>>, Vec<Move>) {
     (parse_stacks(stacks), parse_moves(moves))
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day5.txt");
     let input = parse_input(input);

@@ -132,6 +132,7 @@ fn parse_input(input: &str) -> (Vec<u32>, Vec<Board>) {
     (draws, boards)
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day4.txt");
     let (draws, boards) = parse_input(input);

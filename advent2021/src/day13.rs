@@ -81,6 +81,7 @@ fn parse_input(input: &str) -> (Points, Vec<Fold>) {
     (points, folds)
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day13.txt");
     let (points, folds) = parse_input(input);

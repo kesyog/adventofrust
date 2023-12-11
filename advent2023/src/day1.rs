@@ -86,6 +86,7 @@ fn parse_input(input: &'static str) -> Parsed {
     utils::trim_and_split(input, "\n").collect()
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day1.txt");
     let input = parse_input(input);

@@ -312,6 +312,7 @@ fn parse_input(input: &str) -> Vec<Direction> {
     input.trim().chars().flat_map(Direction::try_from).collect()
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day17.txt");
     let input = parse_input(input);

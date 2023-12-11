@@ -69,6 +69,7 @@ fn parse_claims(input: &str) -> Vec<Claim> {
         .collect()
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day3.txt");
     let claims = parse_claims(input);

@@ -131,6 +131,7 @@ fn parse_input(input: &str) -> Elves {
         .collect()
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day23.txt");
     let input = parse_input(input);

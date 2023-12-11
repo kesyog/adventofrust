@@ -46,6 +46,7 @@ fn part2(input: &[i32]) -> i32 {
     panic!("No solution found");
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day1.txt");
     let input: Vec<i32> = utils::find_all_integers(input);

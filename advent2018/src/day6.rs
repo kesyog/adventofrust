@@ -170,6 +170,7 @@ fn calculate_basic_stats(points: &[Point]) -> ([Point; 2], Point) {
     )
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day6.txt");
     // Gratuitous use of nom for the sake of learning how nom parsers work

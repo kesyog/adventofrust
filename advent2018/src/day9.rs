@@ -109,6 +109,7 @@ fn parse_input(input: &str) -> (usize, usize) {
     (nums[0], nums[1])
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day9.txt");
     let (n_players, last_marble) = parse_input(input);

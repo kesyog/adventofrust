@@ -132,6 +132,7 @@ fn parse_input(input: &str) -> [isize; 4] {
     utils::find_all_integers(input).try_into().unwrap()
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day17.txt");
     let input = parse_input(input);

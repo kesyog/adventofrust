@@ -14,7 +14,7 @@ fn parse_input(input: &str) -> Parsed {
     unimplemented!()
 }
 
-fn main() {
+#[cfg(not(test))] fn main() {
     let input = include_str!("../inputs/dayDAY.txt");
     let input = parse_input(input);
 

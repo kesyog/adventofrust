@@ -91,6 +91,7 @@ fn parse_input(input: &str) -> (&str, HashMap<[u8; 2], u8>) {
     (template, rules_map)
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day14.txt");
     let (template, rules) = parse_input(input);

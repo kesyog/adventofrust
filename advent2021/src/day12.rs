@@ -59,6 +59,7 @@ fn parse_input(input: &'static str) -> Graph {
     graph
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day12.txt");
     let input = parse_input(input);

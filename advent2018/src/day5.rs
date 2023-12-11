@@ -52,6 +52,7 @@ fn part2(polymer: &str) -> usize {
         .unwrap()
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day5.txt").trim();
     let reacted_polymer = react(input);

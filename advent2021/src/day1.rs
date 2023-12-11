@@ -20,6 +20,7 @@ fn part2(readings: &[i32]) -> usize {
     n_increases
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day1.txt");
     let input: Vec<i32> = utils::split_and_parse(input, "\n").collect();

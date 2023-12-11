@@ -12,6 +12,7 @@ fn part2(elves: &[Vec<usize>]) -> usize {
     sums.into_iter().take(3).map(|i| i.0).sum()
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day1.txt");
     let input = parse_input(input);

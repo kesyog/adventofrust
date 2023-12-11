@@ -255,6 +255,7 @@ fn parse_input(input: &str) -> Vec<(bool, Cuboid)> {
         .collect()
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day22.txt");
     let input = parse_input(input);

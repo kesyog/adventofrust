@@ -66,6 +66,7 @@ fn parse_ids(input: &str) -> Vec<&str> {
     utils::trim_and_split(input, "\n").collect()
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day2.txt");
     let ids = parse_ids(input);

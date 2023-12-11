@@ -458,6 +458,7 @@ fn parse_input(input: &str) -> Result<Maze> {
     Ok(out)
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day24.txt");
     let input = parse_input(input).unwrap();

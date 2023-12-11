@@ -52,6 +52,7 @@ fn parse_input(input: &str) -> Vec<Line> {
     points
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day5.txt");
     let lines = parse_input(input);

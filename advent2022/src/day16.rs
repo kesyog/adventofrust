@@ -287,6 +287,7 @@ fn parse_input(input: &str) -> CaveGraph {
     }
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day16.txt");
     let input = parse_input(input);

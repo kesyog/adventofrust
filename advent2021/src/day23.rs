@@ -391,6 +391,7 @@ fn parse_input(input: &str) -> [[AmphipodKind; 2]; 4] {
     result
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day23.txt");
     let input = parse_input(input);

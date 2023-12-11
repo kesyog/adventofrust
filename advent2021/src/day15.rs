@@ -105,6 +105,7 @@ fn part2(input: &str) -> u32 {
     solve(&expanded_grid)
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day15.txt");
 

@@ -222,6 +222,7 @@ fn parse_input(input: &str) -> Vec<Blueprint> {
     out
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day19.txt");
     let input = parse_input(input);

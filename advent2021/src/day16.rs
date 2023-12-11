@@ -279,6 +279,7 @@ fn part2(input: &Packet) -> u64 {
     input.evaluate()
 }
 
+#[cfg(not(test))]
 fn main() {
     let input = include_str!("../inputs/day16.txt");
     let input = input.trim();
