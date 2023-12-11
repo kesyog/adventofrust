@@ -3,6 +3,7 @@ members = [
   "advent*",
   "utils",
 ]
+resolver = "2"
 
 [profile.test]
 # Some tests run super slowly without optimization. Sign of great algorithms 💀
