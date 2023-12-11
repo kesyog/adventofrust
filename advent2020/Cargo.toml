@@ -3,7 +3,7 @@ name = "advent2020"
 description = "Solutions to Advent of Code 2020"
 version = "0.1.0"
 authors = ["Kesavan Yogeswaran <kesyog@gmail.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 num-integer = "0.1"
